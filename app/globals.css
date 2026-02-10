@@ -1,22 +1,23 @@
 @import "tailwindcss";
 
 @theme {
+  /* Culorile tale */
   --color-wedding-pink: #FCDBDF;
   --color-wedding-rose: #F6A0A6;
   --color-wedding-cream: #FDF3D8;
   --color-wedding-moss: #D1D77A;
   --color-wedding-forest: #5E893C;
 
+  /* Legăm fonturile de variabilele din layout.tsx */
   --font-serif: var(--font-playfair);
   --font-sans: var(--font-montserrat);
 }
 
 @layer base {
   body {
-    /* Updated to use your pink as the main background */
-    @apply bg-wedding-pink text-wedding-forest font-sans;
+    @apply bg-wedding-cream text-wedding-forest font-sans;
   }
-  h1, h2, h3 {
+  h1, h2, h3, h4 {
     @apply font-serif;
   }
 }

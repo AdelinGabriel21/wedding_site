@@ -2,21 +2,22 @@ import type { Metadata } from "next";
 import { Playfair_Display, Montserrat } from "next/font/google";
 import "./globals.css";
 
-// Configure Playfair Display for that high-end wedding feel
+// 1. Definim fonturile
 const playfair = Playfair_Display({
     subsets: ["latin"],
-    variable: "--font-playfair", // This matches the variable in globals.css
+    variable: "--font-playfair", // Numele variabilei CSS
+    display: 'swap',
 });
 
-// Configure Montserrat for clean, readable details
 const montserrat = Montserrat({
     subsets: ["latin"],
-    variable: "--font-montserrat", // This matches the variable in globals.css
+    variable: "--font-montserrat", // Numele variabilei CSS
+    display: 'swap',
 });
 
 export const metadata: Metadata = {
-    title: "Our Wedding | 2026",
-    description: "Join us for our special day.",
+    title: "Izabela & Adelin | 2026",
+    description: "Vă așteptăm la nunta noastră!",
 };
 
 export default function RootLayout({
@@ -25,8 +26,9 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" className={`${playfair.variable} ${montserrat.variable}`}>
-        <body className="antialiased">
+        // 2. Aplicăm variabilele pe tag-ul html
+        <html lang="ro" className={`${playfair.variable} ${montserrat.variable}`} suppressHydrationWarning>
+        <body className="antialiased font-sans">
         {children}
         </body>
         </html>
