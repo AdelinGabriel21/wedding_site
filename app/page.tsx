@@ -43,18 +43,16 @@ export default function Home() {
                     </p>
                 </div>
 
-                {/* Indicator vizual pentru scroll */}
-                <div className="absolute bottom-10 z-20 animate-bounce opacity-50">
-                    <div className="w-px h-12 bg-white mx-auto" />
+                {/* --- TIMER-UL MUTAT AICI --- */}
+                {/* Folosim absolute bottom-12 pentru a-l lipi de partea de jos a hero-ului */}
+                <div className="absolute bottom-12 left-0 right-0 z-20 flex justify-center px-4">
+                    <div className="scale-90 md:scale-100"> {/* Îl micșorăm puțin pe mobil ca să nu ocupe tot ecranul */}
+                        <Countdown />
+                    </div>
                 </div>
             </section>
 
             <main className="flex flex-col items-center justify-center px-6 py-20 text-center space-y-32 md:space-y-48">
-
-                {/* Numărătoare Inversă */}
-                <FadeIn>
-                    <Countdown />
-                </FadeIn>
 
                 {/* Povestea Noastră */}
                 <FadeIn>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 // Updated to August 9, 2026
-const TARGET_DATE = new Date("2026-08-09T16:00:00");
+const TARGET_DATE = new Date("2026-08-09T14:00:00");
 
 export default function Countdown() {
     const [mounted, setMounted] = useState(false);
@@ -52,13 +52,12 @@ export default function Countdown() {
 function TimeUnit({ value, label }: { value: number; label: string }) {
     return (
         <div className="flex flex-col items-center">
-            {/* Added bg-white/60 to make it pop against the pink background */}
-            <div className="bg-white/60 backdrop-blur-sm border border-wedding-rose/30 w-16 h-16 md:w-24 md:h-24 flex items-center justify-center rounded-2xl shadow-sm">
-                <span className="text-2xl md:text-4xl font-serif text-wedding-forest">
+            <div className="bg-white/20 border-white/30 backdrop-blur-sm border w-16 h-16 md:w-24 md:h-24 flex items-center justify-center rounded-2xl shadow-sm">
+                <span className="text-2xl md:text-4xl font-serif text-white">
                     {value.toString().padStart(2, "0")}
                 </span>
             </div>
-            <span className="mt-2 text-[10px] uppercase tracking-widest text-wedding-forest/70 font-bold">
+            <span className="mt-2 text-[10px] uppercase tracking-widest text-white/70 font-bold">
                 {label}
             </span>
         </div>
