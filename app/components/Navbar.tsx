@@ -24,38 +24,95 @@ export default function Navbar() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    const isSolid = scrolled || isOpen;
+
+    // Funcția magică ce previne stricarea butonului de Back
+    const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+        e.preventDefault(); // Oprește comportamentul default (schimbarea URL-ului)
+
+        const targetId = href.replace("#", "");
+        const element = document.getElementById(targetId);
+
+        if (element) {
+            // Calculăm poziția exactă.
+            // Am lăsat un mic offset (80px) ca navbar-ul să nu acopere titlul secțiunii.
+            const navbarHeight = 80;
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.scrollY - navbarHeight;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: "smooth"
+            });
+        }
+
+        setIsOpen(false); // Închide meniul pe mobil după click
+    };
+
     return (
-        <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-white/70 backdrop-blur-md py-4 shadow-sm" : "bg-transparent py-6"}`}>
+        <nav
+            className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+                isSolid ? "bg-white/80 backdrop-blur-md py-4 shadow-sm" : "bg-transparent py-6"
+            }`}
+        >
             <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
-                <a href="#home" className="font-serif text-2xl text-wedding-forest font-bold">I&A</a>
+
+                <a
+                    href="#home"
+                    onClick={(e) => handleNavClick(e, "#home")}
+                    className={`font-serif text-2xl font-bold transition-colors duration-300 cursor-pointer ${
+                        isSolid ? "text-wedding-forest" : "text-white"
+                    }`}
+                >
+                    I&A
+                </a>
 
                 {/* Desktop Nav */}
                 <div className="hidden md:flex gap-8">
                     {navLinks.map((link) => (
-                        <a key={link.name} href={link.href} className="text-xs uppercase tracking-widest text-wedding-forest hover:text-wedding-rose transition-colors font-bold">
+                        <a
+                            key={link.name}
+                            href={link.href}
+                            onClick={(e) => handleNavClick(e, link.href)}
+                            className={`text-xs uppercase tracking-widest font-bold transition-colors duration-300 cursor-pointer ${
+                                isSolid
+                                    ? "text-wedding-forest hover:text-wedding-rose"
+                                    : "text-white hover:text-white/70"
+                            }`}
+                        >
                             {link.name}
                         </a>
                     ))}
                 </div>
 
-                {/* Mobile Toggle */}
-                <button className="md:hidden text-wedding-forest" onClick={() => setIsOpen(!isOpen)}>
+                {/* Mobile Toggle Button */}
+                <button
+                    className={`md:hidden transition-colors duration-300 ${
+                        isSolid ? "text-wedding-forest" : "text-white"
+                    }`}
+                    onClick={() => setIsOpen(!isOpen)}
+                >
                     {isOpen ? <X /> : <Menu />}
                 </button>
             </div>
 
-            {/* Mobile Menu */}
+            {/* Mobile Menu Dropdown */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden bg-white/95 backdrop-blur-lg border-b border-wedding-pink"
+                        className="md:hidden bg-white/95 backdrop-blur-lg border-b border-wedding-pink overflow-hidden"
                     >
-                        <div className="flex flex-col p-6 gap-4">
+                        <div className="flex flex-col p-6 gap-6">
                             {navLinks.map((link) => (
-                                <a key={link.name} href={link.href} onClick={() => setIsOpen(false)} className="text-sm uppercase tracking-widest text-wedding-forest font-bold">
+                                <a
+                                    key={link.name}
+                                    href={link.href}
+                                    onClick={(e) => handleNavClick(e, link.href)}
+                                    className="text-sm uppercase tracking-widest text-wedding-forest font-bold cursor-pointer"
+                                >
                                     {link.name}
                                 </a>
                             ))}
