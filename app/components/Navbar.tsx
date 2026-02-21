@@ -32,21 +32,29 @@ export default function Navbar() {
         const targetId = href.replace("#", "");
         const element = document.getElementById(targetId);
 
-        if (element) {
-            const navbarHeight = 80;
-            // 1. Calculăm poziția și declanșăm scroll-ul IMEDIAT
-            // Fără setTimeout, pentru a respecta regulile stricte de pe iOS/Safari.
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.scrollY - navbarHeight;
+        // Funcția separată de scroll
+        const performScroll = () => {
+            if (element) {
+                const navbarHeight = 80;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.scrollY - navbarHeight;
 
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: "smooth"
-            });
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }
+        };
+
+        // AICI E MAGIA:
+        if (isOpen) {
+            // Dacă suntem pe mobil și meniul e deschis:
+            setIsOpen(false); // 1. Închidem meniul
+            setTimeout(performScroll, 300); // 2. Așteptăm 300ms (cât durează animația de ieșire) apoi facem scroll
+        } else {
+            // Dacă suntem pe desktop:
+            performScroll(); // Facem scroll instantaneu
         }
-
-        // 2. Închidem meniul pe mobil
-        setIsOpen(false);
     };
 
     return (
