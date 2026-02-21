@@ -16,7 +16,7 @@ export default function Home() {
             {/* --- SECTION: HOME (HERO) --- */}
             <section
                 id="home"
-                className="relative h-screen min-h-[650px] w-full flex flex-col items-center justify-center overflow-hidden"
+                className="relative h-screen min-h-162.5 w-full flex flex-col items-center justify-center overflow-hidden"
             >
                 {/* Fundal Video */}
                 <video

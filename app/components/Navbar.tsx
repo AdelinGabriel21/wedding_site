@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, MouseEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
@@ -26,30 +26,27 @@ export default function Navbar() {
 
     const isSolid = scrolled || isOpen;
 
-    // Funcția magică ce previne stricarea butonului de Back
-    // Funcția magică reparată pentru mobil
-    const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-        e.preventDefault(); // Oprește schimbarea URL-ului
-
-        setIsOpen(false); // 1. Închidem meniul prima dată
+    const handleNavClick = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
+        e.preventDefault();
 
         const targetId = href.replace("#", "");
         const element = document.getElementById(targetId);
 
         if (element) {
-            // 2. Punem o mică pauză (150ms) ca să lăsăm meniul să dispară
-            // fără să anuleze efectul de scroll al browserului pe mobil.
-            setTimeout(() => {
-                const navbarHeight = 80;
-                const elementPosition = element.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.scrollY - navbarHeight;
+            const navbarHeight = 80;
+            // 1. Calculăm poziția și declanșăm scroll-ul IMEDIAT
+            // Fără setTimeout, pentru a respecta regulile stricte de pe iOS/Safari.
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.scrollY - navbarHeight;
 
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: "smooth"
-                });
-            }, 150);
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: "smooth"
+            });
         }
+
+        // 2. Închidem meniul pe mobil
+        setIsOpen(false);
     };
 
     return (
@@ -90,7 +87,7 @@ export default function Navbar() {
 
                 {/* Mobile Toggle Button */}
                 <button
-                    className={`md:hidden transition-colors duration-300 ${
+                    className={`md:hidden transition-colors duration-300 p-2 -mr-2 ${
                         isSolid ? "text-wedding-forest" : "text-white"
                     }`}
                     onClick={() => setIsOpen(!isOpen)}
@@ -108,13 +105,14 @@ export default function Navbar() {
                         exit={{ opacity: 0, height: 0 }}
                         className="md:hidden bg-white/95 backdrop-blur-lg border-b border-wedding-pink overflow-hidden"
                     >
-                        <div className="flex flex-col p-6 gap-6">
+                        <div className="flex flex-col px-6 py-4">
                             {navLinks.map((link) => (
                                 <a
                                     key={link.name}
                                     href={link.href}
                                     onClick={(e) => handleNavClick(e, link.href)}
-                                    className="text-sm uppercase tracking-widest text-wedding-forest font-bold cursor-pointer"
+                                    // Am adăugat block, w-full și py-4 pentru a face TOATĂ lățimea rândului apăsabilă
+                                    className="block w-full py-4 text-sm uppercase tracking-widest text-wedding-forest font-bold cursor-pointer active:text-wedding-rose transition-colors"
                                 >
                                     {link.name}
                                 </a>
