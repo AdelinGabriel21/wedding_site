@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Montserrat } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react"; // 1. Importăm modulul Vercel Analytics
 import "./globals.css";
 
 // 1. Definim fonturile
@@ -30,6 +31,8 @@ export default function RootLayout({
         <html lang="ro" className={`${playfair.variable} ${montserrat.variable}`} suppressHydrationWarning>
         <body className="antialiased font-sans">
         {children}
+        {/* 3. Adăugăm componenta Analytics la finalul body-ului */}
+        <Analytics />
         </body>
         </html>
     );

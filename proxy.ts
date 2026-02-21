@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     // 1. Verificăm dacă utilizatorul are cookie-ul de acces
     const hasAccess = request.cookies.has('wedding_access');
     const path = request.nextUrl.pathname;
@@ -14,9 +14,8 @@ export function middleware(request: NextRequest) {
 
     if (isStaticAsset) return NextResponse.next();
 
-    // 4. Dacă nu are acces și încearcă să intre pe o pagină protejată (cum ar fi `/`)
+    // 4. Dacă nu are acces și încearcă să intre pe o pagină protejată
     if (!hasAccess && !isPublicPage) {
-        // Îl trimitem la pagina de parolă
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
@@ -28,7 +27,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
 }
 
-// Configurația pe ce rute rulează middleware-ul
 export const config = {
     matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
