@@ -27,26 +27,29 @@ export default function Navbar() {
     const isSolid = scrolled || isOpen;
 
     // Funcția magică ce previne stricarea butonului de Back
+    // Funcția magică reparată pentru mobil
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-        e.preventDefault(); // Oprește comportamentul default (schimbarea URL-ului)
+        e.preventDefault(); // Oprește schimbarea URL-ului
+
+        setIsOpen(false); // 1. Închidem meniul prima dată
 
         const targetId = href.replace("#", "");
         const element = document.getElementById(targetId);
 
         if (element) {
-            // Calculăm poziția exactă.
-            // Am lăsat un mic offset (80px) ca navbar-ul să nu acopere titlul secțiunii.
-            const navbarHeight = 80;
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.scrollY - navbarHeight;
+            // 2. Punem o mică pauză (150ms) ca să lăsăm meniul să dispară
+            // fără să anuleze efectul de scroll al browserului pe mobil.
+            setTimeout(() => {
+                const navbarHeight = 80;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.scrollY - navbarHeight;
 
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: "smooth"
-            });
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }, 150);
         }
-
-        setIsOpen(false); // Închide meniul pe mobil după click
     };
 
     return (

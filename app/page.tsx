@@ -16,8 +16,9 @@ export default function Home() {
             {/* --- SECTION: HOME (HERO) --- */}
             <section
                 id="home"
-                className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden"
+                className="relative h-screen min-h-[650px] w-full flex flex-col items-center justify-center overflow-hidden"
             >
+                {/* Fundal Video */}
                 <video
                     autoPlay
                     muted
@@ -28,25 +29,34 @@ export default function Home() {
                     <source src="/videos/hero-bg.mp4" type="video/mp4" />
                 </video>
 
+                {/* Overlay întunecat */}
                 <div className="absolute inset-0 z-10 bg-black/40 backdrop-blur-[1px]" />
 
-                <div className="relative z-20 text-center px-6">
-                    <p className="text-white font-sans font-bold tracking-[0.5em] uppercase text-xs mb-4 drop-shadow-md">
-                        {"Ne căsătorim"}
-                    </p>
-                    <h1 className="text-6xl md:text-9xl font-serif text-white drop-shadow-2xl">
-                        {"Izabela & Adelin"}
-                    </h1>
-                    <div className="w-16 h-px bg-white/60 mx-auto my-8" />
-                    <p className="text-xl md:text-2xl font-serif italic text-white/90 drop-shadow-md">
-                        {"9 August 2026 • România"}
-                    </p>
-                </div>
+                {/* Container flexibil pentru conținut (evită suprapunerea pe ecrane mici) */}
+                <div className="relative z-20 w-full h-full flex flex-col items-center justify-between pt-32 pb-12 px-6">
 
-                {/* --- TIMER-UL MUTAT AICI --- */}
-                {/* Folosim absolute bottom-12 pentru a-l lipi de partea de jos a hero-ului */}
-                <div className="absolute bottom-12 left-0 right-0 z-20 flex justify-center px-4">
-                    <div className="scale-90 md:scale-100"> {/* Îl micșorăm puțin pe mobil ca să nu ocupe tot ecranul */}
+                    {/* Spațiu invizibil sus pentru a împinge textul spre mijloc */}
+                    <div className="flex-1" />
+
+                    {/* Blocul de Text */}
+                    <div className="text-center w-full">
+                        <p className="text-white font-sans font-bold tracking-[0.5em] uppercase text-xs mb-4 drop-shadow-md">
+                            {"Ne căsătorim"}
+                        </p>
+                        <h1 className="text-6xl md:text-9xl font-serif text-white drop-shadow-2xl">
+                            {"Izabela & Adelin"}
+                        </h1>
+                        <div className="w-16 h-px bg-white/60 mx-auto my-6 md:my-8" />
+                        <p className="text-xl md:text-2xl font-serif italic text-white/90 drop-shadow-md">
+                            {"9 August 2026 • România"}
+                        </p>
+                    </div>
+
+                    {/* Spațiu invizibil între text și cronometru */}
+                    <div className="flex-1" />
+
+                    {/* Cronometrul la bază (în fluxul paginii, FĂRĂ absolute) */}
+                    <div className="w-full flex justify-center scale-90 md:scale-100">
                         <Countdown />
                     </div>
                 </div>
