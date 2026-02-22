@@ -5,6 +5,7 @@ import Schedule from "./components/Schedule";
 import Location from "./components/Location";
 import Gallery from "./components/Gallery";
 import FadeIn from "./components/FadeIn";
+import RsvpForm from "./components/RsvpForm";
 
 export default function Home() {
     return (
@@ -130,24 +131,18 @@ export default function Home() {
                 </section>
 
                 {/* --- SECTION: RSVP --- */}
-                <section id="rsvp" className="w-full max-w-2xl mx-auto pt-20 pb-20">
+                <section id="rsvp" className="w-full mx-auto pt-20 pb-32">
                     <FadeIn>
-                        <div className="bg-wedding-forest text-wedding-cream p-12 md:p-20 rounded-[3rem] shadow-2xl relative overflow-hidden">
-                            {/* Element decorativ fundal */}
-                            <div className="absolute top-[-10%] right-[-10%] w-40 h-40 bg-white/5 rounded-full blur-3xl" />
-
-                            <h2 className="text-4xl md:text-5xl font-serif mb-6 italic">{"Vei fi alături de noi?"}</h2>
-                            <p className="mb-10 opacity-80 font-sans tracking-wide">
-                                {"Confirmările vor fi disponibile în curând prin formularul nostru personalizat."}
+                        <div className="text-center mb-12">
+                            <h2 className="text-4xl md:text-5xl font-serif text-wedding-forest mb-4 italic">{"Vei fi alături de noi?"}</h2>
+                            <p className="opacity-80 font-sans tracking-widest uppercase text-xs text-wedding-forest">
+                                {"Te rugăm să confirmi prezența până la data de 1 Iulie 2026."}
                             </p>
-
-                            <div className="flex flex-col items-center gap-4">
-                                <button className="bg-wedding-cream text-wedding-forest px-12 py-4 rounded-full font-bold uppercase text-xs tracking-[0.2em] opacity-50 cursor-not-allowed shadow-lg">
-                                    {"RSVP În Curând"}
-                                </button>
-                                <p className="text-[10px] uppercase tracking-tighter opacity-60">{"Termen limită: 1 Iulie 2026"}</p>
-                            </div>
                         </div>
+
+                        {/* Aici chemăm formularul inteligent */}
+                        <RsvpForm />
+
                     </FadeIn>
                 </section>
 

@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+// 1. Am adus SyntheticEvent în loc de FormEvent
+import { useState, SyntheticEvent } from "react";
 import { verifyPassword } from "../actions/auth";
 import { Lock } from "lucide-react";
 
 export default function LoginPage() {
     const [error, setError] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // 2. Folosim SyntheticEvent aici
+    const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const result = await verifyPassword(formData);
@@ -16,7 +18,7 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen bg-wedding-cream flex flex-col items-center justify-center px-6">
-            <div className="bg-white/60 backdrop-blur-md p-10 rounded-[2rem] border border-wedding-pink shadow-xl max-w-md w-full text-center">
+            <div className="bg-white/60 backdrop-blur-md p-10 rounded-4xl border border-wedding-pink shadow-xl max-w-md w-full text-center">
                 <div className="w-16 h-16 bg-wedding-forest/10 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Lock className="text-wedding-forest w-8 h-8" />
                 </div>

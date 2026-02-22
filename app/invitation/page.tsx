@@ -1,8 +1,9 @@
 import { grantDirectAccess } from "../actions/auth";
 import { Mail } from "lucide-react";
+import { Metadata } from "next"; // 1. Importăm tipul Metadata
 
-// Ascundem pagina de Google
-export const metadata = {
+// 2. Adăugăm ": Metadata" pentru a-i spune lui TypeScript ce tip de date este
+export const metadata: Metadata = {
     robots: { index: false, follow: false }
 };
 
