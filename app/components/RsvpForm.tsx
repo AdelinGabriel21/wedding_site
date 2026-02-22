@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, SyntheticEvent } from "react";
+import { useState, useEffect, SyntheticEvent } from "react";
 import { supabase } from "../lib/supabase";
-import { User, Users, Plus, Trash2, CheckCircle2 } from "lucide-react";
+import { User, Users, Plus, Trash2, CheckCircle2, Edit2 } from "lucide-react";
 
 type Child = {
     id: string;
@@ -13,9 +13,20 @@ type Child = {
     mentiuni_meniu: string;
 };
 
+// Tipul pentru datele returnate din Supabase
+type SupabaseChildData = {
+    id: string;
+    nume: string;
+    prenume: string;
+    varsta: number | null;
+    meniu: string;
+    mentiuni_meniu: string | null;
+};
+
 export default function RsvpForm() {
-    // Stări pentru progres
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [status, setStatus] = useState<'idle' | 'fetching' | 'loading' | 'success' | 'error'>('idle');
+    const [existingId, setExistingId] = useState<string | null>(null);
+
     const [tipCompletare, setTipCompletare] = useState<'mine' | 'insotitor' | null>(null);
 
     // Stări comune
@@ -23,10 +34,7 @@ export default function RsvpForm() {
     const [nume, setNume] = useState("");
     const [prenume, setPrenume] = useState("");
     const [varsta, setVarsta] = useState("");
-
-    // 1. MODIFICARE: Meniul implicit este acum Vegetarian
     const [meniu, setMeniu] = useState("Vegetarian");
-
     const [mentiuni, setMentiuni] = useState("");
     const [observatii, setObservatii] = useState("");
 
@@ -40,6 +48,66 @@ export default function RsvpForm() {
     // Stări Copii
     const [hasCopii, setHasCopii] = useState(false);
     const [copii, setCopii] = useState<Child[]>([]);
+
+    // 1. Am mutat definiția funcției deasupra lui useEffect
+    const fetchExistingRsvp = async (id: string) => {
+        setStatus('fetching');
+        const { data, error } = await supabase
+            .from('rsvps')
+            .select('*, rsvp_copii(*)')
+            .eq('id', id)
+            .single();
+
+        // 2. Acum folosim variabila "error"
+        if (error) {
+            console.error("Eroare la aducerea datelor vechi:", error);
+            localStorage.removeItem('rsvp_id');
+            setStatus('idle');
+            return;
+        }
+
+        if (data) {
+            setExistingId(data.id);
+            setTipCompletare(data.tip_completare as 'mine' | 'insotitor');
+            setPrezent(data.prezent);
+            setNume(data.nume);
+            setPrenume(data.prenume);
+            setVarsta(data.varsta ? data.varsta.toString() : "");
+            setMeniu(data.meniu);
+            setMentiuni(data.mentiuni_meniu || "");
+            setObservatii(data.alte_observatii || "");
+            setTelefon(data.telefon || "");
+            setNumeInsotit(data.nume_insotit || "");
+            setPrenumeInsotit(data.prenume_insotit || "");
+
+            if (data.rsvp_copii && data.rsvp_copii.length > 0) {
+                setHasCopii(true);
+                // 3. Am scos `any` și i-am dat tipul SupabaseChildData
+                setCopii(data.rsvp_copii.map((c: SupabaseChildData) => ({
+                    id: c.id,
+                    nume: c.nume,
+                    prenume: c.prenume,
+                    varsta: c.varsta ? c.varsta.toString() : "",
+                    meniu: c.meniu,
+                    mentiuni_meniu: c.mentiuni_meniu || ""
+                })));
+            }
+            setStatus('success');
+        } else {
+            localStorage.removeItem('rsvp_id');
+            setStatus('idle');
+        }
+    };
+
+    useEffect(() => {
+        const savedId = localStorage.getItem('rsvp_id');
+        if (savedId) {
+            // 4. Am adăugat .catch() ca să tratăm Promise-ul, așa cum cere ESLint
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            fetchExistingRsvp(savedId).catch(console.error);
+        }
+         
+    }, []);
 
     const handleAddChild = () => {
         setCopii([...copii, { id: Date.now().toString(), nume: "", prenume: "", varsta: "", meniu: "Meniu Copil", mentiuni_meniu: "" }]);
@@ -57,35 +125,59 @@ export default function RsvpForm() {
         e.preventDefault();
         setStatus('loading');
 
-        // 1. Inserăm Adultul în baza de date
-        const { data: rsvpData, error: rsvpError } = await supabase
-            .from('rsvps')
-            .insert([{
-                tip_completare: tipCompletare,
-                prezent: prezent,
-                nume,
-                prenume,
-                varsta: varsta ? parseInt(varsta) : null,
-                meniu,
-                mentiuni_meniu: mentiuni,
-                alte_observatii: observatii,
-                telefon: tipCompletare === 'mine' ? telefon : null,
-                nume_insotit: tipCompletare === 'insotitor' ? numeInsotit : null,
-                prenume_insotit: tipCompletare === 'insotitor' ? prenumeInsotit : null
-            }])
-            .select()
-            .single();
+        const rsvpPayload = {
+            tip_completare: tipCompletare,
+            prezent: prezent,
+            nume,
+            prenume,
+            varsta: varsta ? parseInt(varsta) : null,
+            meniu,
+            mentiuni_meniu: mentiuni,
+            alte_observatii: observatii,
+            telefon: tipCompletare === 'mine' ? telefon : null,
+            nume_insotit: tipCompletare === 'insotitor' ? numeInsotit : null,
+            prenume_insotit: tipCompletare === 'insotitor' ? prenumeInsotit : null
+        };
 
-        if (rsvpError) {
-            console.error(rsvpError);
-            setStatus('error');
-            return;
+        let currentRsvpId = existingId;
+
+        if (existingId) {
+            const { error: updateError } = await supabase
+                .from('rsvps')
+                .update(rsvpPayload)
+                // 5. Folosim "as string" pentru a garanta lui TypeScript că avem un text
+                .eq('id', existingId as string);
+
+            if (updateError) {
+                console.error(updateError);
+                setStatus('error');
+                return;
+            }
+
+            // Ștergem copiii vechi ca să îi putem re-insera pe cei noi/modificați fără duplicate
+            await supabase.from('rsvp_copii').delete().eq('rsvp_id', existingId as string);
+
+        } else {
+            const { data: rsvpData, error: insertError } = await supabase
+                .from('rsvps')
+                .insert([rsvpPayload])
+                .select()
+                .single();
+
+            if (insertError) {
+                console.error(insertError);
+                setStatus('error');
+                return;
+            }
+            currentRsvpId = rsvpData.id;
+            setExistingId(currentRsvpId);
+            localStorage.setItem('rsvp_id', currentRsvpId as string);
         }
 
-        // 2. Inserăm Copiii (dacă există și dacă a confirmat că vine)
+        // Inserăm noii Copii
         if (prezent && hasCopii && copii.length > 0 && tipCompletare === 'mine') {
             const copiiToInsert = copii.map(c => ({
-                rsvp_id: rsvpData.id,
+                rsvp_id: currentRsvpId as string,
                 nume: c.nume,
                 prenume: c.prenume,
                 varsta: parseInt(c.varsta) || 0,
@@ -97,28 +189,40 @@ export default function RsvpForm() {
             if (copiiError) console.error(copiiError);
         }
 
-        // Salvăm ID-ul în browser pentru a putea face funcția de "Editare" ulterior
-        localStorage.setItem('rsvp_id', rsvpData.id);
         setStatus('success');
     };
 
-    // Dacă a trimis cu succes
+    if (status === 'fetching') {
+        return (
+            <div className="bg-white/60 backdrop-blur-md p-12 rounded-[2.5rem] shadow-lg border border-wedding-pink/50 text-center max-w-lg mx-auto animate-pulse">
+                <div className="w-12 h-12 border-4 border-wedding-pink border-t-wedding-rose rounded-full animate-spin mx-auto mb-4" />
+                <p className="text-wedding-forest font-serif italic">Se încarcă răspunsul tău...</p>
+            </div>
+        );
+    }
+
     if (status === 'success') {
         return (
             <div className="bg-white/80 backdrop-blur-md border border-wedding-pink p-12 rounded-[2.5rem] shadow-xl text-center max-w-lg mx-auto">
                 <CheckCircle2 className="w-20 h-20 text-wedding-moss mx-auto mb-6" />
-                <h3 className="text-3xl font-serif text-wedding-forest mb-4">Mulțumim!</h3>
+                <h3 className="text-3xl font-serif text-wedding-forest mb-4">Mulțumim, {prenume}!</h3>
                 <p className="font-sans text-wedding-forest/80 mb-8">
-                    {prezent ? "Abia așteptăm să sărbătorim împreună!" : "Ne pare rău că nu poți ajunge, dar ne vom gândi la tine!"}
+                    {prezent ? "Am înregistrat confirmarea ta. Abia așteptăm să sărbătorim împreună!" : "Am înregistrat răspunsul tău. Ne pare rău că nu poți ajunge, dar ne vom gândi la tine!"}
                 </p>
+
+                <button
+                    onClick={() => setStatus('idle')}
+                    className="flex items-center justify-center gap-2 mx-auto text-xs font-bold uppercase tracking-widest text-wedding-rose hover:text-wedding-forest transition-colors"
+                >
+                    <Edit2 className="w-4 h-4" />
+                    Editează Răspunsul
+                </button>
             </div>
         );
     }
 
     return (
         <div className="w-full max-w-3xl mx-auto text-left font-sans text-wedding-forest">
-
-            {/* ETAPA 1: Alegerea tipului de formular */}
             {!tipCompletare && (
                 <div className="bg-white/60 backdrop-blur-md p-8 md:p-12 rounded-[2.5rem] shadow-lg border border-wedding-pink/50 text-center">
                     <h3 className="text-2xl font-serif mb-8">Pentru cine completezi formularul?</h3>
@@ -135,10 +239,8 @@ export default function RsvpForm() {
                 </div>
             )}
 
-            {/* ETAPA 2: Formularul propriu-zis */}
             {tipCompletare && (
                 <form onSubmit={handleSubmit} className="bg-white/60 backdrop-blur-md p-6 md:p-12 rounded-[2.5rem] shadow-lg border border-wedding-pink/50 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-
                     <div className="flex justify-between items-center border-b border-wedding-pink/30 pb-4 mb-8">
                         <h3 className="text-2xl font-serif italic">
                             {tipCompletare === 'mine' ? "Datele Tale" : "Date Însoțitor"}
@@ -148,7 +250,6 @@ export default function RsvpForm() {
                         </button>
                     </div>
 
-                    {/* Prezența - Cea mai importantă */}
                     <div className="space-y-4 bg-white/50 p-6 rounded-2xl border border-wedding-pink/30">
                         <label className="block text-sm font-bold uppercase tracking-widest">Vei fi prezent(ă)? *</label>
                         <div className="flex gap-4">
@@ -174,7 +275,6 @@ export default function RsvpForm() {
                         </div>
                     </div>
 
-                    {/* Secțiune Condițională Adulți */}
                     {tipCompletare === 'mine' ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
@@ -202,13 +302,11 @@ export default function RsvpForm() {
                         </div>
                     )}
 
-                    {/* Partea de Meniu e necesară doar dacă vine la nuntă */}
                     {prezent && (
                         <>
                             <div className="space-y-2">
                                 <label className="text-xs font-bold uppercase tracking-widest pl-2">Meniu Preferat</label>
                                 <select value={meniu} onChange={(e) => setMeniu(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose appearance-none">
-                                    {/* 2. MODIFICARE: Doar opțiunile Vegetarian și Vegan pt Adulți */}
                                     <option value="Vegetarian">Vegetarian</option>
                                     <option value="Vegan">Vegan (De Post)</option>
                                 </select>
@@ -219,7 +317,6 @@ export default function RsvpForm() {
                                 <textarea value={mentiuni} onChange={(e) => setMentiuni(e.target.value)} rows={2} placeholder="Ex: Fără gluten, alergie la alune..." className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose resize-none" />
                             </div>
 
-                            {/* SECȚIUNEA COPII - 3. MODIFICARE: Se afișează DOAR dacă e "Pentru Mine" */}
                             {tipCompletare === 'mine' && (
                                 <div className="pt-6 border-t border-wedding-pink/30 space-y-6">
                                     <label className="flex items-center gap-3 cursor-pointer group">
@@ -245,7 +342,6 @@ export default function RsvpForm() {
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                         <input type="number" required placeholder="Vârstă" value={copil.varsta} onChange={(e) => handleChildChange(copil.id, 'varsta', e.target.value)} className="w-full px-4 py-2 text-sm rounded-xl border border-wedding-pink/50 bg-white" />
                                                         <select value={copil.meniu} onChange={(e) => handleChildChange(copil.id, 'meniu', e.target.value)} className="w-full px-4 py-2 text-sm rounded-xl border border-wedding-pink/50 bg-white">
-                                                            {/* 4. MODIFICARE: Optiunile de meniu pentru copii */}
                                                             <option value="Meniu Copil">Meniu Special Copil</option>
                                                             <option value="Vegetarian">Vegetarian (Meniu Adult)</option>
                                                             <option value="Vegan">Vegan (Meniu Adult)</option>
@@ -265,7 +361,6 @@ export default function RsvpForm() {
                         </>
                     )}
 
-                    {/* Observații Generale */}
                     <div className="space-y-2 pt-6 border-t border-wedding-pink/30">
                         <label className="text-xs font-bold uppercase tracking-widest pl-2">Alte Observații (Ex: Nevoi speciale, dedicatii muzicale)</label>
                         <textarea value={observatii} onChange={(e) => setObservatii(e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose resize-none" />
@@ -274,7 +369,7 @@ export default function RsvpForm() {
                     {status === 'error' && <p className="text-red-500 text-sm font-bold text-center">A apărut o eroare. Te rugăm să încerci din nou.</p>}
 
                     <button disabled={status === 'loading' || prezent === null} type="submit" className="w-full bg-wedding-forest text-white px-8 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-sm hover:bg-wedding-rose transition-colors shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
-                        {status === 'loading' ? 'Se trimite...' : 'Trimite Răspunsul'}
+                        {status === 'loading' ? 'Se salvează...' : existingId ? 'Actualizează Răspunsul' : 'Trimite Răspunsul'}
                     </button>
                 </form>
             )}
