@@ -204,7 +204,7 @@ export default function RsvpForm() {
     if (status === 'success') {
         return (
             <div className="bg-white/80 backdrop-blur-md border border-wedding-pink p-12 rounded-[2.5rem] shadow-xl text-center max-w-lg mx-auto">
-                <CheckCircle2 className="w-20 h-20 text-wedding-moss mx-auto mb-6" />
+                <CheckCircle2 className="w-20 h-20 text-wedding-rose mx-auto mb-6" />
                 <h3 className="text-3xl font-serif text-wedding-forest mb-4">Mulțumim, {prenume}!</h3>
                 <p className="font-sans text-wedding-forest/80 mb-8">
                     {prezent ? "Am înregistrat confirmarea ta. Abia așteptăm să sărbătorim împreună!" : "Am înregistrat răspunsul tău. Ne pare rău că nu poți ajunge, dar ne vom gândi la tine!"}
@@ -227,12 +227,12 @@ export default function RsvpForm() {
                 <div className="bg-white/60 backdrop-blur-md p-8 md:p-12 rounded-[2.5rem] shadow-lg border border-wedding-pink/50 text-center">
                     <h3 className="text-2xl font-serif mb-8">Pentru cine completezi formularul?</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <button onClick={() => setTipCompletare('mine')} className="flex flex-col items-center gap-4 p-8 border-2 border-wedding-pink hover:border-wedding-rose bg-white/50 hover:bg-white transition-all rounded-3xl cursor-pointer group">
-                            <User className="w-12 h-12 text-wedding-rose/50 group-hover:text-wedding-rose transition-colors" />
+                        <button onClick={() => setTipCompletare('mine')} className="flex flex-col items-center gap-4 p-8 border-2 border-wedding-pink hover:border-wedding-rose hover:bg-wedding-pink/30 bg-white/50 hover:bg-white transition-all rounded-3xl cursor-pointer group">
+                            <User className="w-12 h-12 text-wedding-rose group-hover:text-wedding-rose transition-colors" />
                             <span className="font-bold tracking-widest uppercase text-sm">Pentru mine</span>
                         </button>
-                        <button onClick={() => setTipCompletare('insotitor')} className="flex flex-col items-center gap-4 p-8 border-2 border-wedding-pink hover:border-wedding-rose bg-white/50 hover:bg-white transition-all rounded-3xl cursor-pointer group">
-                            <Users className="w-12 h-12 text-wedding-rose/50 group-hover:text-wedding-rose transition-colors" />
+                        <button onClick={() => setTipCompletare('insotitor')} className="flex flex-col items-center gap-4 p-8 border-2 border-wedding-pink hover:border-wedding-rose hover:bg-wedding-pink/30 bg-white/50 hover:bg-white transition-all rounded-3xl cursor-pointer group">
+                            <Users className="w-12 h-12 text-wedding-rose group-hover:text-wedding-rose transition-colors" />
                             <span className="font-bold tracking-widest uppercase text-sm">Pentru un însoțitor<br/><span className="text-[10px] opacity-70">(Plus One)</span></span>
                         </button>
                     </div>
@@ -368,7 +368,7 @@ export default function RsvpForm() {
 
                     {status === 'error' && <p className="text-red-500 text-sm font-bold text-center">A apărut o eroare. Te rugăm să încerci din nou.</p>}
 
-                    <button disabled={status === 'loading' || prezent === null} type="submit" className="w-full bg-wedding-forest text-white px-8 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-sm hover:bg-wedding-rose transition-colors shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button disabled={status === 'loading' || prezent === null} type="submit" className="w-full bg-wedding-rose text-white px-8 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-sm hover:bg-wedding-forest transition-colors shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
                         {status === 'loading' ? 'Se salvează...' : existingId ? 'Actualizează Răspunsul' : 'Trimite Răspunsul'}
                     </button>
                 </form>

@@ -68,9 +68,11 @@ export default function Home() {
                 {/* Povestea Noastră */}
                 <FadeIn>
                     <section className="max-w-2xl w-full bg-white/40 backdrop-blur-md border border-wedding-pink/50 p-8 md:p-12 rounded-[2.5rem] shadow-sm">
+                        {/* Accent roz adăugat aici */}
+                        <p className="text-wedding-rose font-bold tracking-[0.3em] uppercase text-[10px] mb-4">Cum a început totul</p>
                         <h2 className="text-4xl font-serif text-wedding-forest mb-6">{"Povestea Noastră"}</h2>
                         <p className="font-sans text-wedding-forest/90 leading-relaxed text-lg">
-                            {"De la laboratoarele de informatică din anul doi, unde codul ne-a adus împreună, la o viață plină de aventuri împreună. Suntem extrem de fericiți să începem acest nou capitol și abia așteptăm să sărbătorim alături de voi."}
+                            {"De la laboratoarele de informatică din anul doi..."}
                         </p>
                     </section>
                 </FadeIn>
@@ -116,12 +118,12 @@ export default function Home() {
                     <FadeIn>
                         <h2 className="text-4xl font-serif text-wedding-forest mb-12">{"Contact"}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-wedding-forest font-sans">
-                            <div className="p-6 bg-white/30 rounded-2xl border border-wedding-pink/30">
+                            <div className="p-6 bg-wedding-pink/40 rounded-2xl border border-wedding-rose/20 shadow-sm">
                                 <p className="text-wedding-rose font-bold uppercase tracking-[0.2em] text-[10px] mb-3">{"Mireasă"}</p>
                                 <p className="text-xl font-medium">{"Izabela"}</p>
                                 <p className="text-sm opacity-70">{"07xx xxx xxx"}</p>
                             </div>
-                            <div className="p-6 bg-white/30 rounded-2xl border border-wedding-pink/30">
+                            <div className="p-6 bg-wedding-pink/40 rounded-2xl border border-wedding-rose/20 shadow-sm">
                                 <p className="text-wedding-rose font-bold uppercase tracking-[0.2em] text-[10px] mb-3">{"Mire"}</p>
                                 <p className="text-xl font-medium">{"Adelin"}</p>
                                 <p className="text-sm opacity-70">{"07xx xxx xxx"}</p>
@@ -149,7 +151,7 @@ export default function Home() {
                 {/* Footer */}
                 <footer className="mt-20 flex flex-col items-center gap-8 opacity-40 pb-10">
                     <div className="w-16 h-16 border border-wedding-forest rounded-full flex items-center justify-center rotate-45">
-                        <span className="font-serif text-wedding-forest text-2xl -rotate-45">{"I&A"}</span>
+                        <span className="font-serif text-wedding-rose text-2xl -rotate-45">{"I&A"}</span>
                     </div>
                     <div className="space-y-2">
                         <p className="font-sans text-[10px] tracking-[0.3em] uppercase">

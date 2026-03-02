@@ -1,21 +1,35 @@
 @import "tailwindcss";
 
-@theme {
-  /* Culorile tale */
-  --color-wedding-pink: #FCDBDF;
-  --color-wedding-rose: #F6A0A6;
-  --color-wedding-cream: #FDF3D8;
-  --color-wedding-moss: #D1D77A;
-  --color-wedding-forest: #5E893C;
+:root {
+  --font-inter: ui-sans-serif, system-ui, sans-serif;
+  --font-nunito: ui-sans-serif, system-ui, sans-serif;
+}
 
-  /* Legăm fonturile de variabilele din layout.tsx */
+@theme {
+  /* Paleta "Fine Art Wedding" - Elegant și Profesional */
+
+  /* Roz pudrat pentru fundaluri subtile (ex: carduri) */
+  --color-wedding-pink: #FDF1F2;
+  /* Roz trandafiriu pentru accente (butoane, iconițe, texte importante) */
+  --color-wedding-rose: #DE8B92;
+
+  /* Fundalul principal - un alb extrem de curat, abia perceptibil de cald (Alabaster) */
+  --color-wedding-cream: #FCFBF9;
+
+  /* Verde mușchi - pentru detalii secundare */
+  --color-wedding-moss: #A9B373;
+  /* Verde pădure închis - pentru text principal (contrast premium) */
+  --color-wedding-forest: #2E401E;
+
+  /* Fonturile */
   --font-serif: var(--font-playfair);
   --font-sans: var(--font-montserrat);
 }
 
 @layer base {
   body {
-    @apply bg-wedding-cream text-wedding-forest font-sans;
+    /* Folosim fundalul alb-curat și textul verde-închis */
+    @apply bg-wedding-cream text-wedding-forest font-sans antialiased;
   }
   h1, h2, h3, h4 {
     @apply font-serif;
