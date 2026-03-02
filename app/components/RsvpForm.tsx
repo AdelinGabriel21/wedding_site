@@ -13,7 +13,6 @@ type Child = {
     mentiuni_meniu: string;
 };
 
-// Tipul pentru datele returnate din Supabase
 type SupabaseChildData = {
     id: string;
     nume: string;
@@ -29,7 +28,6 @@ export default function RsvpForm() {
 
     const [tipCompletare, setTipCompletare] = useState<'mine' | 'insotitor' | null>(null);
 
-    // Stări comune
     const [prezent, setPrezent] = useState<boolean | null>(null);
     const [nume, setNume] = useState("");
     const [prenume, setPrenume] = useState("");
@@ -38,18 +36,13 @@ export default function RsvpForm() {
     const [mentiuni, setMentiuni] = useState("");
     const [observatii, setObservatii] = useState("");
 
-    // Stări specifice "Pentru mine"
     const [telefon, setTelefon] = useState("");
-
-    // Stări specifice "Pentru însoțitor"
     const [numeInsotit, setNumeInsotit] = useState("");
     const [prenumeInsotit, setPrenumeInsotit] = useState("");
 
-    // Stări Copii
     const [hasCopii, setHasCopii] = useState(false);
     const [copii, setCopii] = useState<Child[]>([]);
 
-    // 1. Am mutat definiția funcției deasupra lui useEffect
     const fetchExistingRsvp = async (id: string) => {
         setStatus('fetching');
         const { data, error } = await supabase
@@ -58,7 +51,6 @@ export default function RsvpForm() {
             .eq('id', id)
             .single();
 
-        // 2. Acum folosim variabila "error"
         if (error) {
             console.error("Eroare la aducerea datelor vechi:", error);
             localStorage.removeItem('rsvp_id');
@@ -82,7 +74,6 @@ export default function RsvpForm() {
 
             if (data.rsvp_copii && data.rsvp_copii.length > 0) {
                 setHasCopii(true);
-                // 3. Am scos `any` și i-am dat tipul SupabaseChildData
                 setCopii(data.rsvp_copii.map((c: SupabaseChildData) => ({
                     id: c.id,
                     nume: c.nume,
@@ -102,11 +93,9 @@ export default function RsvpForm() {
     useEffect(() => {
         const savedId = localStorage.getItem('rsvp_id');
         if (savedId) {
-            // 4. Am adăugat .catch() ca să tratăm Promise-ul, așa cum cere ESLint
             // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchExistingRsvp(savedId).catch(console.error);
         }
-         
     }, []);
 
     const handleAddChild = () => {
@@ -145,7 +134,6 @@ export default function RsvpForm() {
             const { error: updateError } = await supabase
                 .from('rsvps')
                 .update(rsvpPayload)
-                // 5. Folosim "as string" pentru a garanta lui TypeScript că avem un text
                 .eq('id', existingId as string);
 
             if (updateError) {
@@ -154,7 +142,6 @@ export default function RsvpForm() {
                 return;
             }
 
-            // Ștergem copiii vechi ca să îi putem re-insera pe cei noi/modificați fără duplicate
             await supabase.from('rsvp_copii').delete().eq('rsvp_id', existingId as string);
 
         } else {
@@ -174,7 +161,6 @@ export default function RsvpForm() {
             localStorage.setItem('rsvp_id', currentRsvpId as string);
         }
 
-        // Inserăm noii Copii
         if (prezent && hasCopii && copii.length > 0 && tipCompletare === 'mine') {
             const copiiToInsert = copii.map(c => ({
                 rsvp_id: currentRsvpId as string,
@@ -194,25 +180,25 @@ export default function RsvpForm() {
 
     if (status === 'fetching') {
         return (
-            <div className="bg-white/60 backdrop-blur-md p-12 rounded-[2.5rem] shadow-lg border border-wedding-pink/50 text-center max-w-lg mx-auto animate-pulse">
+            <div className="bg-wedding-cream p-10 md:p-14 rounded-4xl shadow-lg border border-white/40 text-center animate-pulse w-full">
                 <div className="w-12 h-12 border-4 border-wedding-pink border-t-wedding-rose rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-wedding-forest font-serif italic">Se încarcă răspunsul tău...</p>
+                <p className="text-wedding-text font-serif italic">Se încarcă răspunsul tău...</p>
             </div>
         );
     }
 
     if (status === 'success') {
         return (
-            <div className="bg-white/80 backdrop-blur-md border border-wedding-pink p-12 rounded-[2.5rem] shadow-xl text-center max-w-lg mx-auto">
+            <div className="bg-wedding-cream p-10 md:p-14 rounded-4xl shadow-lg border border-white/40 text-center w-full">
                 <CheckCircle2 className="w-20 h-20 text-wedding-rose mx-auto mb-6" />
-                <h3 className="text-3xl font-serif text-wedding-forest mb-4">Mulțumim, {prenume}!</h3>
-                <p className="font-sans text-wedding-forest/80 mb-8">
+                <h3 className="text-3xl font-serif text-wedding-text mb-4">Mulțumim, {nume}!</h3>
+                <p className="font-sans text-wedding-text/90 mb-8 font-medium">
                     {prezent ? "Am înregistrat confirmarea ta. Abia așteptăm să sărbătorim împreună!" : "Am înregistrat răspunsul tău. Ne pare rău că nu poți ajunge, dar ne vom gândi la tine!"}
                 </p>
 
                 <button
                     onClick={() => setStatus('idle')}
-                    className="flex items-center justify-center gap-2 mx-auto text-xs font-bold uppercase tracking-widest text-wedding-rose hover:text-wedding-forest transition-colors"
+                    className="flex items-center justify-center gap-2 mx-auto text-xs font-bold uppercase tracking-widest text-wedding-rose hover:text-wedding-text transition-colors bg-white px-6 py-3 rounded-full shadow-sm"
                 >
                     <Edit2 className="w-4 h-4" />
                     Editează Răspunsul
@@ -222,42 +208,42 @@ export default function RsvpForm() {
     }
 
     return (
-        <div className="w-full max-w-3xl mx-auto text-left font-sans text-wedding-forest">
+        <div className="w-full text-left font-sans text-wedding-text">
             {!tipCompletare && (
-                <div className="bg-white/60 backdrop-blur-md p-8 md:p-12 rounded-[2.5rem] shadow-lg border border-wedding-pink/50 text-center">
-                    <h3 className="text-2xl font-serif mb-8">Pentru cine completezi formularul?</h3>
+                <div className="bg-wedding-cream p-10 md:p-14 rounded-4xl shadow-lg border border-white/40 text-center">
+                    <h3 className="text-2xl font-serif mb-8 text-wedding-text">Pentru cine completezi formularul?</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <button onClick={() => setTipCompletare('mine')} className="flex flex-col items-center gap-4 p-8 border-2 border-wedding-pink hover:border-wedding-rose hover:bg-wedding-pink/30 bg-white/50 hover:bg-white transition-all rounded-3xl cursor-pointer group">
-                            <User className="w-12 h-12 text-wedding-rose group-hover:text-wedding-rose transition-colors" />
-                            <span className="font-bold tracking-widest uppercase text-sm">Pentru mine</span>
+                        <button onClick={() => setTipCompletare('mine')} className="flex flex-col items-center gap-4 p-8 border-2 border-transparent hover:border-wedding-rose bg-white transition-all rounded-3xl cursor-pointer group shadow-sm hover:shadow-md">
+                            <User className="w-12 h-12 text-wedding-rose group-hover:scale-110 transition-transform" />
+                            <span className="font-bold tracking-widest uppercase text-sm text-wedding-text">Pentru mine</span>
                         </button>
-                        <button onClick={() => setTipCompletare('insotitor')} className="flex flex-col items-center gap-4 p-8 border-2 border-wedding-pink hover:border-wedding-rose hover:bg-wedding-pink/30 bg-white/50 hover:bg-white transition-all rounded-3xl cursor-pointer group">
-                            <Users className="w-12 h-12 text-wedding-rose group-hover:text-wedding-rose transition-colors" />
-                            <span className="font-bold tracking-widest uppercase text-sm">Pentru un însoțitor<br/><span className="text-[10px] opacity-70">(Plus One)</span></span>
+                        <button onClick={() => setTipCompletare('insotitor')} className="flex flex-col items-center gap-4 p-8 border-2 border-transparent hover:border-wedding-rose bg-white transition-all rounded-3xl cursor-pointer group shadow-sm hover:shadow-md">
+                            <Users className="w-12 h-12 text-wedding-rose group-hover:scale-110 transition-transform" />
+                            <span className="font-bold tracking-widest uppercase text-sm text-wedding-text">Pentru un însoțitor<br/><span className="text-[10px] opacity-70">(Plus One)</span></span>
                         </button>
                     </div>
                 </div>
             )}
 
             {tipCompletare && (
-                <form onSubmit={handleSubmit} className="bg-white/60 backdrop-blur-md p-6 md:p-12 rounded-[2.5rem] shadow-lg border border-wedding-pink/50 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div className="flex justify-between items-center border-b border-wedding-pink/30 pb-4 mb-8">
-                        <h3 className="text-2xl font-serif italic">
+                <form onSubmit={handleSubmit} className="bg-wedding-cream p-8 md:p-14 rounded-4xl shadow-lg border border-white/40 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className="flex justify-between items-center border-b border-wedding-text/10 pb-6 mb-8">
+                        <h3 className="text-3xl font-serif italic text-wedding-text">
                             {tipCompletare === 'mine' ? "Datele Tale" : "Date Însoțitor"}
                         </h3>
-                        <button type="button" onClick={() => setTipCompletare(null)} className="text-xs font-bold uppercase tracking-widest text-wedding-rose hover:text-wedding-forest transition-colors">
+                        <button type="button" onClick={() => setTipCompletare(null)} className="text-xs font-bold uppercase tracking-widest text-wedding-rose hover:text-wedding-text transition-colors bg-white px-5 py-2.5 rounded-full shadow-sm">
                             Înapoi
                         </button>
                     </div>
 
-                    <div className="space-y-4 bg-white/50 p-6 rounded-2xl border border-wedding-pink/30">
-                        <label className="block text-sm font-bold uppercase tracking-widest">Vei fi prezent(ă)? *</label>
+                    <div className="space-y-4 bg-wedding-pink/30 p-8 rounded-3xl border border-white/50">
+                        <label className="block text-sm font-bold uppercase tracking-widest text-wedding-text">Vei fi prezent(ă)? *</label>
                         <div className="flex gap-4">
-                            <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${prezent === true ? 'border-wedding-moss bg-wedding-moss/10 text-wedding-moss font-bold' : 'border-wedding-pink/50 bg-white hover:border-wedding-moss/50'}`}>
+                            <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${prezent === true ? 'border-wedding-moss bg-wedding-moss text-white font-bold shadow-md' : 'border-transparent bg-white/70 hover:bg-white'}`}>
                                 <input type="radio" name="prezent" required checked={prezent === true} onChange={() => setPrezent(true)} className="hidden" />
                                 Da, cu drag!
                             </label>
-                            <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${prezent === false ? 'border-red-400 bg-red-50 text-red-600 font-bold' : 'border-wedding-pink/50 bg-white hover:border-red-200'}`}>
+                            <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all ${prezent === false ? 'border-wedding-rose bg-wedding-rose text-white font-bold shadow-md' : 'border-transparent bg-white/70 hover:bg-white'}`}>
                                 <input type="radio" name="prezent" required checked={prezent === false} onChange={() => setPrezent(false)} className="hidden" />
                                 Nu pot ajunge
                             </label>
@@ -267,11 +253,11 @@ export default function RsvpForm() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <label className="text-xs font-bold uppercase tracking-widest pl-2">Nume *</label>
-                            <input type="text" required value={nume} onChange={(e) => setNume(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose transition-colors" />
+                            <input type="text" required value={nume} onChange={(e) => setNume(e.target.value)} className="w-full px-5 py-4 rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose transition-colors shadow-sm" />
                         </div>
                         <div className="space-y-2">
                             <label className="text-xs font-bold uppercase tracking-widest pl-2">Prenume *</label>
-                            <input type="text" required value={prenume} onChange={(e) => setPrenume(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose transition-colors" />
+                            <input type="text" required value={prenume} onChange={(e) => setPrenume(e.target.value)} className="w-full px-5 py-4 rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose transition-colors shadow-sm" />
                         </div>
                     </div>
 
@@ -279,24 +265,24 @@ export default function RsvpForm() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-xs font-bold uppercase tracking-widest pl-2">Telefon *</label>
-                                <input type="tel" required value={telefon} onChange={(e) => setTelefon(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose" />
+                                <input type="tel" required value={telefon} onChange={(e) => setTelefon(e.target.value)} className="w-full px-5 py-4 rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose transition-colors shadow-sm" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-bold uppercase tracking-widest pl-2">Vârstă</label>
-                                <input type="number" value={varsta} onChange={(e) => setVarsta(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose" />
+                                <input type="number" value={varsta} onChange={(e) => setVarsta(e.target.value)} className="w-full px-5 py-4 rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose transition-colors shadow-sm" />
                             </div>
                         </div>
                     ) : (
-                        <div className="bg-wedding-pink/20 p-6 rounded-2xl space-y-6">
+                        <div className="bg-wedding-pink/20 p-8 rounded-3xl space-y-6 border border-white/50">
                             <p className="text-xs font-bold uppercase tracking-widest text-wedding-rose text-center">Pe cine însoțești?</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold uppercase tracking-widest pl-2">Numele persoanei *</label>
-                                    <input type="text" required value={numeInsotit} onChange={(e) => setNumeInsotit(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose" />
+                                    <input type="text" required value={numeInsotit} onChange={(e) => setNumeInsotit(e.target.value)} className="w-full px-5 py-4 rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose shadow-sm" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold uppercase tracking-widest pl-2">Prenumele persoanei *</label>
-                                    <input type="text" required value={prenumeInsotit} onChange={(e) => setPrenumeInsotit(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose" />
+                                    <input type="text" required value={prenumeInsotit} onChange={(e) => setPrenumeInsotit(e.target.value)} className="w-full px-5 py-4 rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose shadow-sm" />
                                 </div>
                             </div>
                         </div>
@@ -306,7 +292,7 @@ export default function RsvpForm() {
                         <>
                             <div className="space-y-2">
                                 <label className="text-xs font-bold uppercase tracking-widest pl-2">Meniu Preferat</label>
-                                <select value={meniu} onChange={(e) => setMeniu(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose appearance-none">
+                                <select value={meniu} onChange={(e) => setMeniu(e.target.value)} className="w-full px-5 py-4 rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose appearance-none shadow-sm text-wedding-text">
                                     <option value="Vegetarian">Vegetarian</option>
                                     <option value="Vegan">Vegan (De Post)</option>
                                 </select>
@@ -314,34 +300,34 @@ export default function RsvpForm() {
 
                             <div className="space-y-2">
                                 <label className="text-xs font-bold uppercase tracking-widest pl-2">Alergii sau Restricții Alimentare</label>
-                                <textarea value={mentiuni} onChange={(e) => setMentiuni(e.target.value)} rows={2} placeholder="Ex: Fără gluten, alergie la alune..." className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose resize-none" />
+                                <textarea value={mentiuni} onChange={(e) => setMentiuni(e.target.value)} rows={2} placeholder="Ex: Fără gluten, alergie la alune..." className="w-full px-5 py-4 rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose resize-none shadow-sm" />
                             </div>
 
                             {tipCompletare === 'mine' && (
-                                <div className="pt-6 border-t border-wedding-pink/30 space-y-6">
-                                    <label className="flex items-center gap-3 cursor-pointer group">
-                                        <input type="checkbox" checked={hasCopii} onChange={(e) => setHasCopii(e.target.checked)} className="w-5 h-5 rounded border-wedding-pink text-wedding-moss focus:ring-wedding-moss" />
-                                        <span className="font-bold uppercase tracking-widest text-sm group-hover:text-wedding-rose transition-colors">Vin împreună cu copii</span>
+                                <div className="pt-8 border-t border-wedding-text/10 space-y-6">
+                                    <label className="flex items-center gap-3 cursor-pointer group bg-wedding-pink/20 p-5 rounded-2xl border border-white/50 hover:bg-wedding-pink/40 transition-colors w-fit">
+                                        <input type="checkbox" checked={hasCopii} onChange={(e) => setHasCopii(e.target.checked)} className="w-5 h-5 rounded border-wedding-rose text-wedding-rose focus:ring-wedding-rose" />
+                                        <span className="font-bold uppercase tracking-widest text-sm text-wedding-text">Vin împreună cu copii</span>
                                     </label>
 
                                     {hasCopii && (
-                                        <div className="space-y-6 pl-4 md:pl-8 border-l-2 border-wedding-pink/50">
+                                        <div className="space-y-6 pl-2 md:pl-6 border-l-2 border-wedding-pink">
                                             {copii.map((copil, index) => (
-                                                <div key={copil.id} className="bg-white/70 p-6 rounded-2xl border border-wedding-pink/50 relative group shadow-sm">
-                                                    <button type="button" onClick={() => handleRemoveChild(copil.id)} className="absolute -top-3 -right-3 bg-white border border-red-200 text-red-500 p-2 rounded-full hover:bg-red-50 transition-colors shadow-sm">
+                                                <div key={copil.id} className="bg-white/50 p-6 md:p-8 rounded-3xl relative group shadow-sm border border-white/60">
+                                                    <button type="button" onClick={() => handleRemoveChild(copil.id)} className="absolute -top-3 -right-3 bg-white text-wedding-rose p-2.5 rounded-full hover:bg-wedding-rose hover:text-white hover:scale-110 transition-all shadow-md">
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
 
                                                     <p className="text-xs font-bold text-wedding-rose mb-4 uppercase tracking-widest">Copil #{index + 1}</p>
 
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                                        <input type="text" required placeholder="Nume" value={copil.nume} onChange={(e) => handleChildChange(copil.id, 'nume', e.target.value)} className="w-full px-4 py-2 text-sm rounded-xl border border-wedding-pink/50 bg-white" />
-                                                        <input type="text" required placeholder="Prenume" value={copil.prenume} onChange={(e) => handleChildChange(copil.id, 'prenume', e.target.value)} className="w-full px-4 py-2 text-sm rounded-xl border border-wedding-pink/50 bg-white" />
+                                                        <input type="text" required placeholder="Nume" value={copil.nume} onChange={(e) => handleChildChange(copil.id, 'nume', e.target.value)} className="w-full px-4 py-3 text-sm rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose shadow-sm" />
+                                                        <input type="text" required placeholder="Prenume" value={copil.prenume} onChange={(e) => handleChildChange(copil.id, 'prenume', e.target.value)} className="w-full px-4 py-3 text-sm rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose shadow-sm" />
                                                     </div>
 
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                        <input type="number" required placeholder="Vârstă" value={copil.varsta} onChange={(e) => handleChildChange(copil.id, 'varsta', e.target.value)} className="w-full px-4 py-2 text-sm rounded-xl border border-wedding-pink/50 bg-white" />
-                                                        <select value={copil.meniu} onChange={(e) => handleChildChange(copil.id, 'meniu', e.target.value)} className="w-full px-4 py-2 text-sm rounded-xl border border-wedding-pink/50 bg-white">
+                                                        <input type="number" required placeholder="Vârstă" value={copil.varsta} onChange={(e) => handleChildChange(copil.id, 'varsta', e.target.value)} className="w-full px-4 py-3 text-sm rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose shadow-sm" />
+                                                        <select value={copil.meniu} onChange={(e) => handleChildChange(copil.id, 'meniu', e.target.value)} className="w-full px-4 py-3 text-sm rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose shadow-sm text-wedding-text">
                                                             <option value="Meniu Copil">Meniu Special Copil</option>
                                                             <option value="Vegetarian">Vegetarian (Meniu Adult)</option>
                                                             <option value="Vegan">Vegan (Meniu Adult)</option>
@@ -351,8 +337,8 @@ export default function RsvpForm() {
                                                 </div>
                                             ))}
 
-                                            <button type="button" onClick={handleAddChild} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-wedding-moss hover:text-wedding-rose transition-colors py-2">
-                                                <Plus className="w-4 h-4" /> Adaugă încă un copil
+                                            <button type="button" onClick={handleAddChild} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-wedding-rose hover:text-wedding-text transition-colors py-2 bg-white px-5 rounded-full shadow-sm hover:shadow-md">
+                                                <Plus className="w-4 h-4" /> Adaugă copil
                                             </button>
                                         </div>
                                     )}
@@ -361,14 +347,14 @@ export default function RsvpForm() {
                         </>
                     )}
 
-                    <div className="space-y-2 pt-6 border-t border-wedding-pink/30">
-                        <label className="text-xs font-bold uppercase tracking-widest pl-2">Alte Observații (Ex: Nevoi speciale, dedicatii muzicale)</label>
-                        <textarea value={observatii} onChange={(e) => setObservatii(e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-wedding-pink/50 bg-white focus:outline-none focus:border-wedding-rose resize-none" />
+                    <div className="space-y-2 pt-8 border-t border-wedding-text/10">
+                        <label className="text-xs font-bold uppercase tracking-widest pl-2">Alte Observații</label>
+                        <textarea value={observatii} onChange={(e) => setObservatii(e.target.value)} rows={2} className="w-full px-5 py-4 rounded-xl border-none bg-white focus:outline-none focus:ring-2 focus:ring-wedding-rose resize-none shadow-sm" />
                     </div>
 
-                    {status === 'error' && <p className="text-red-500 text-sm font-bold text-center">A apărut o eroare. Te rugăm să încerci din nou.</p>}
+                    {status === 'error' && <p className="text-red-500 text-sm font-bold text-center bg-red-50 p-3 rounded-xl border border-red-100">A apărut o eroare. Te rugăm să încerci din nou.</p>}
 
-                    <button disabled={status === 'loading' || prezent === null} type="submit" className="w-full bg-wedding-rose text-white px-8 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-sm hover:bg-wedding-forest transition-colors shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button disabled={status === 'loading' || prezent === null} type="submit" className="w-full bg-wedding-rose text-white px-8 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-sm hover:bg-wedding-text transition-colors shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
                         {status === 'loading' ? 'Se salvează...' : existingId ? 'Actualizează Răspunsul' : 'Trimite Răspunsul'}
                     </button>
                 </form>

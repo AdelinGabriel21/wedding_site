@@ -1,35 +1,22 @@
 @import "tailwindcss";
 
-:root {
-  --font-inter: ui-sans-serif, system-ui, sans-serif;
-  --font-nunito: ui-sans-serif, system-ui, sans-serif;
-}
-
 @theme {
-  /* Paleta "Fine Art Wedding" - Elegant și Profesional */
-
-  /* Roz pudrat pentru fundaluri subtile (ex: carduri) */
-  --color-wedding-pink: #FDF1F2;
-  /* Roz trandafiriu pentru accente (butoane, iconițe, texte importante) */
-  --color-wedding-rose: #DE8B92;
-
-  /* Fundalul principal - un alb extrem de curat, abia perceptibil de cald (Alabaster) */
-  --color-wedding-cream: #FCFBF9;
-
-  /* Verde mușchi - pentru detalii secundare */
-  --color-wedding-moss: #A9B373;
-  /* Verde pădure închis - pentru text principal (contrast premium) */
-  --color-wedding-forest: #2E401E;
+  /* Paleta ta exactă din Pinterest */
+  --color-wedding-bg: #D7DAB3;    /* Fundalul general */
+  --color-wedding-text: #4A6644;  /* Verdele închis pentru text */
+  --color-wedding-moss: #9FAA74;  /* Verde mediu pentru casete */
+  --color-wedding-rose: #C66F80;  /* Roz intens / Zmeură stinsă pentru accente și butoane */
+  --color-wedding-pink: #F4C7D0;  /* Roz pudrat pentru casete */
+  --color-wedding-cream: #FCEBF1; /* Alb-Rozaliu cel mai deschis (pentru formular) */
 
   /* Fonturile */
-  --font-serif: var(--font-playfair);
-  --font-sans: var(--font-montserrat);
+  --font-serif: var(--font-playfair, "Playfair Display", serif);
+  --font-sans: var(--font-montserrat, "Montserrat", sans-serif);
 }
 
 @layer base {
   body {
-    /* Folosim fundalul alb-curat și textul verde-închis */
-    @apply bg-wedding-cream text-wedding-forest font-sans antialiased;
+    @apply bg-wedding-bg text-wedding-text font-sans antialiased;
   }
   h1, h2, h3, h4 {
     @apply font-serif;
