@@ -51,10 +51,9 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* MAIN WRAPPER - Fără constrângeri de lățime pentru a permite Color Blocking */}
             <main className="w-full flex flex-col">
 
-                {/* --- SECTION: POVESTEA NOASTRĂ (Fundal Roz Pudrat Imersiv) --- */}
+                {/* --- SECTION: POVESTEA NOASTRĂ (Fundal Roz Pudrat) --- */}
                 <section className="w-full bg-wedding-pink py-24 md:py-32 px-6">
                     <FadeIn className="max-w-3xl mx-auto text-center">
                         <p className="text-wedding-rose font-bold tracking-[0.3em] uppercase text-[10px] mb-4">Cum a început totul</p>
@@ -65,17 +64,23 @@ export default function Home() {
                     </FadeIn>
                 </section>
 
-                {/* --- SECTION: SCHEDULE & LOCATION (Fundal Crem Luminos) --- */}
-                <section id="schedule-location" className="w-full bg-wedding-cream py-24 md:py-32 px-6">
-                    <div className="max-w-3xl mx-auto space-y-24">
-                        <div id="schedule"><FadeIn><Schedule /></FadeIn></div>
-                        <div id="location"><FadeIn><Location /></FadeIn></div>
-                    </div>
+                {/* --- SECTION: SCHEDULE (Fundal Crem deschis/Rozaliu) --- */}
+                <section className="w-full bg-wedding-cream py-24 md:py-32 px-6">
+                    <FadeIn id="schedule" className="max-w-3xl mx-auto">
+                        <Schedule />
+                    </FadeIn>
                 </section>
 
-                {/* --- SECTION: DRESS CODE (Fundal Verde Moss Imersiv) --- */}
-                <section id="dress-code" className="w-full bg-wedding-moss py-24 md:py-32 px-6 text-wedding-cream">
-                    <FadeIn className="max-w-3xl mx-auto text-center">
+                {/* --- SECTION: LOCATION (Fundal Kaki / Verde Deschis) --- */}
+                <section className="w-full bg-wedding-bg py-24 md:py-32 px-6">
+                    <FadeIn id="location" className="max-w-3xl mx-auto">
+                        <Location />
+                    </FadeIn>
+                </section>
+
+                {/* --- SECTION: DRESS CODE (Fundal Verde Moss) --- */}
+                <section className="w-full bg-wedding-moss py-24 md:py-32 px-6 text-wedding-cream">
+                    <FadeIn id="dress-code" className="max-w-3xl mx-auto text-center">
                         <h2 className="text-4xl md:text-5xl font-serif mb-6 text-white">Dress Code</h2>
                         <p className="font-sans text-white/90 leading-relaxed text-lg">
                             Pentru a completa atmosfera magică a locației Forest Barn, vă sugerăm o ținută de tip <span className="font-bold text-wedding-text">Black Tie / Elegant</span>.
@@ -86,13 +91,13 @@ export default function Home() {
                 </section>
 
                 {/* --- SECTION: GALLERY (Fundal Kaki) --- */}
-                <section id="gallery" className="w-full bg-wedding-bg py-24 px-6">
-                    <FadeIn className="max-w-5xl mx-auto">
+                <section className="w-full bg-wedding-bg py-24 px-6">
+                    <FadeIn id="gallery" className="max-w-5xl mx-auto">
                         <Gallery />
                     </FadeIn>
                 </section>
 
-                {/* --- SECTION: CONTACT & RSVP (Fundal Kaki - Aici aducem casetele înapoi) --- */}
+                {/* --- SECTION: CONTACT & RSVP (Fundal Kaki) --- */}
                 <section className="w-full bg-wedding-bg pb-32 px-6">
                     <div className="max-w-3xl mx-auto space-y-24 md:space-y-32">
 
@@ -100,13 +105,11 @@ export default function Home() {
                         <FadeIn id="contact" className="w-full">
                             <h2 className="text-4xl md:text-5xl font-serif text-wedding-text mb-10 text-center">Contact</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 font-sans text-center">
-                                {/* Card Mireasă */}
                                 <div className="p-8 bg-wedding-cream rounded-4xl shadow-md border border-white/50">
                                     <p className="text-wedding-rose font-bold uppercase tracking-[0.2em] text-[10px] mb-3">Mireasă</p>
                                     <p className="text-2xl font-medium mb-1 text-wedding-text">Izabela</p>
                                     <p className="text-sm text-wedding-text/70">07xx xxx xxx</p>
                                 </div>
-                                {/* Card Mire */}
                                 <div className="p-8 bg-wedding-rose text-wedding-cream rounded-4xl shadow-md border border-white/20">
                                     <p className="text-wedding-pink font-bold uppercase tracking-[0.2em] text-[10px] mb-3">Mire</p>
                                     <p className="text-2xl font-medium mb-1">Adelin</p>
@@ -128,7 +131,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* --- FOOTER (Fundal Verde Închis Contrastant) --- */}
+                {/* --- FOOTER --- */}
                 <footer className="w-full bg-wedding-text py-16 flex flex-col items-center gap-6">
                     <div className="w-14 h-14 bg-wedding-rose text-wedding-cream rounded-full flex items-center justify-center shadow-lg">
                         <span className="font-serif text-xl">I&A</span>

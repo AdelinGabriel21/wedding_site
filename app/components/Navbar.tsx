@@ -1,134 +1,112 @@
 "use client";
 
-import { useState, useEffect, MouseEvent } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
-const navLinks = [
-    { name: "Acasă", href: "#home" },
-    { name: "Program", href: "#schedule" },
-    { name: "Locație", href: "#location" },
-    { name: "Dress Code", href: "#dress-code" },
-    { name: "Galerie", href: "#gallery" },
-    { name: "Contact", href: "#contact" },
-    { name: "RSVP", href: "#rsvp" },
-];
-
 export default function Navbar() {
-    const [isOpen, setIsOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 50);
+        const handleScroll = () => {
+            if (window.scrollY > 50) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const isSolid = scrolled || isOpen;
-
-    const handleNavClick = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
-        e.preventDefault();
-
-        const targetId = href.replace("#", "");
-        const element = document.getElementById(targetId);
-
-        // Funcția separată de scroll
-        const performScroll = () => {
-            if (element) {
-                const navbarHeight = 80;
-                const elementPosition = element.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.scrollY - navbarHeight;
-
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: "smooth"
-                });
-            }
-        };
-
-        // AICI E MAGIA:
-        if (isOpen) {
-            // Dacă suntem pe mobil și meniul e deschis:
-            setIsOpen(false); // 1. Închidem meniul
-            setTimeout(performScroll, 300); // 2. Așteptăm 300ms (cât durează animația de ieșire) apoi facem scroll
-        } else {
-            // Dacă suntem pe desktop:
-            performScroll(); // Facem scroll instantaneu
+    const scrollToSection = (id: string) => {
+        setIsMobileMenuOpen(false);
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
         }
     };
 
+    const navItems = [
+        { label: "Acasă", id: "home" },
+        { label: "Program", id: "schedule" },
+        { label: "Locație", id: "location" },
+        { label: "Dress Code", id: "dress-code" },
+        { label: "Galerie", id: "gallery" },
+        { label: "Contact", id: "contact" },
+    ];
+
     return (
         <nav
-            className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-                isSolid ? "bg-white/80 backdrop-blur-md py-4 shadow-sm" : "bg-transparent py-6"
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+                isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm py-4" : "bg-transparent py-6"
             }`}
         >
-            <div className="max-w-6xl mx-auto px-6 flex justify-between items-center">
-
-                <a
-                    href="#home"
-                    onClick={(e) => handleNavClick(e, "#home")}
-                    className={`font-serif text-2xl font-bold transition-colors duration-300 cursor-pointer ${
-                        isSolid ? "text-wedding-forest" : "text-white"
-                    }`}
+            <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+                <div
+                    onClick={() => scrollToSection("home")}
+                    className={`font-serif text-2xl cursor-pointer ${isScrolled ? "text-wedding-text" : "text-white drop-shadow-md"}`}
                 >
-                    I&A
-                </a>
-
-                {/* Desktop Nav */}
-                <div className="hidden md:flex gap-8">
-                    {navLinks.map((link) => (
-                        <a
-                            key={link.name}
-                            href={link.href}
-                            onClick={(e) => handleNavClick(e, link.href)}
-                            className={`text-xs uppercase tracking-widest font-bold transition-colors duration-300 cursor-pointer ${
-                                isSolid
-                                    ? "text-wedding-forest hover:text-wedding-rose"
-                                    : "text-white hover:text-white/70"
-                            }`}
-                        >
-                            {link.name}
-                        </a>
-                    ))}
+                    I & A
                 </div>
 
-                {/* Mobile Toggle Button */}
+                {/* Desktop Menu */}
+                <div className="hidden md:flex items-center gap-8">
+                    {navItems.map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => scrollToSection(item.id)}
+                            className={`font-sans text-xs tracking-[0.2em] uppercase font-bold hover:opacity-100 transition-opacity ${
+                                isScrolled ? "text-wedding-text opacity-70" : "text-white opacity-80 drop-shadow-sm hover:drop-shadow-md"
+                            }`}
+                        >
+                            {item.label}
+                        </button>
+                    ))}
+                    {/* Buton RSVP Highlighted */}
+                    <button
+                        onClick={() => scrollToSection("rsvp")}
+                        className="bg-wedding-rose text-white font-sans text-xs tracking-[0.2em] uppercase font-bold px-5 py-2.5 rounded-full shadow-md hover:bg-wedding-text hover:shadow-lg transition-all"
+                    >
+                        RSVP
+                    </button>
+                </div>
+
+                {/* Mobile Menu Toggle */}
                 <button
-                    className={`md:hidden transition-colors duration-300 p-2 -mr-2 ${
-                        isSolid ? "text-wedding-forest" : "text-white"
-                    }`}
-                    onClick={() => setIsOpen(!isOpen)}
+                    className="md:hidden"
+                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
-                    {isOpen ? <X /> : <Menu />}
+                    {isMobileMenuOpen ? (
+                        <X className={`w-6 h-6 ${isScrolled ? "text-wedding-text" : "text-white"}`} />
+                    ) : (
+                        <Menu className={`w-6 h-6 ${isScrolled ? "text-wedding-text" : "text-white"}`} />
+                    )}
                 </button>
             </div>
 
-            {/* Mobile Menu Dropdown */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden bg-white/95 backdrop-blur-lg border-b border-wedding-pink overflow-hidden"
+            {/* Mobile Menu */}
+            {isMobileMenuOpen && (
+                <div className="md:hidden absolute top-full left-0 w-full bg-white border-t border-wedding-pink shadow-xl py-6 flex flex-col items-center gap-6">
+                    {navItems.map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => scrollToSection(item.id)}
+                            className="font-sans text-sm tracking-[0.2em] uppercase font-bold text-wedding-text"
+                        >
+                            {item.label}
+                        </button>
+                    ))}
+                    {/* Buton RSVP Highlighted pe Mobile */}
+                    <button
+                        onClick={() => scrollToSection("rsvp")}
+                        className="bg-wedding-rose text-white font-sans text-sm tracking-[0.2em] uppercase font-bold px-8 py-3 rounded-full shadow-md"
                     >
-                        <div className="flex flex-col px-6 py-4">
-                            {navLinks.map((link) => (
-                                <a
-                                    key={link.name}
-                                    href={link.href}
-                                    onClick={(e) => handleNavClick(e, link.href)}
-                                    // Am adăugat block, w-full și py-4 pentru a face TOATĂ lățimea rândului apăsabilă
-                                    className="block w-full py-4 text-sm uppercase tracking-widest text-wedding-forest font-bold cursor-pointer active:text-wedding-rose transition-colors"
-                                >
-                                    {link.name}
-                                </a>
-                            ))}
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                        RSVP
+                    </button>
+                </div>
+            )}
         </nav>
     );
 }
