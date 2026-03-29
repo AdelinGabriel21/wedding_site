@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, SyntheticEvent } from "react";
+import { useState, SyntheticEvent } from "react";
 import { supabase } from "../lib/supabase";
-import { User, Users, Plus, Trash2, CheckCircle2, Edit2 } from "lucide-react";
+import { User, Users, Plus, Trash2, CheckCircle2, RotateCcw } from "lucide-react";
 
 type Child = {
     id: string;
@@ -13,18 +13,8 @@ type Child = {
     mentiuni_meniu: string;
 };
 
-type SupabaseChildData = {
-    id: string;
-    nume: string;
-    prenume: string;
-    varsta: number | null;
-    meniu: string;
-    mentiuni_meniu: string | null;
-};
-
 export default function RsvpForm() {
-    const [status, setStatus] = useState<'idle' | 'fetching' | 'loading' | 'success' | 'error'>('idle');
-    const [existingId, setExistingId] = useState<string | null>(null);
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
     const [tipCompletare, setTipCompletare] = useState<'mine' | 'insotitor' | null>(null);
 
@@ -43,61 +33,6 @@ export default function RsvpForm() {
     const [hasCopii, setHasCopii] = useState(false);
     const [copii, setCopii] = useState<Child[]>([]);
 
-    const fetchExistingRsvp = async (id: string) => {
-        setStatus('fetching');
-        const { data, error } = await supabase
-            .from('rsvps')
-            .select('*, rsvp_copii(*)')
-            .eq('id', id)
-            .single();
-
-        if (error) {
-            console.error("Eroare la aducerea datelor vechi:", error);
-            localStorage.removeItem('rsvp_id');
-            setStatus('idle');
-            return;
-        }
-
-        if (data) {
-            setExistingId(data.id);
-            setTipCompletare(data.tip_completare as 'mine' | 'insotitor');
-            setPrezent(data.prezent);
-            setNume(data.nume);
-            setPrenume(data.prenume);
-            setVarsta(data.varsta ? data.varsta.toString() : "");
-            setMeniu(data.meniu);
-            setMentiuni(data.mentiuni_meniu || "");
-            setObservatii(data.alte_observatii || "");
-            setTelefon(data.telefon || "");
-            setNumeInsotit(data.nume_insotit || "");
-            setPrenumeInsotit(data.prenume_insotit || "");
-
-            if (data.rsvp_copii && data.rsvp_copii.length > 0) {
-                setHasCopii(true);
-                setCopii(data.rsvp_copii.map((c: SupabaseChildData) => ({
-                    id: c.id,
-                    nume: c.nume,
-                    prenume: c.prenume,
-                    varsta: c.varsta ? c.varsta.toString() : "",
-                    meniu: c.meniu,
-                    mentiuni_meniu: c.mentiuni_meniu || ""
-                })));
-            }
-            setStatus('success');
-        } else {
-            localStorage.removeItem('rsvp_id');
-            setStatus('idle');
-        }
-    };
-
-    useEffect(() => {
-        const savedId = localStorage.getItem('rsvp_id');
-        if (savedId) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            fetchExistingRsvp(savedId).catch(console.error);
-        }
-    }, []);
-
     const handleAddChild = () => {
         setCopii([...copii, { id: Date.now().toString(), nume: "", prenume: "", varsta: "", meniu: "Meniu Copil", mentiuni_meniu: "" }]);
     };
@@ -108,6 +43,24 @@ export default function RsvpForm() {
 
     const handleChildChange = (id: string, field: keyof Child, value: string) => {
         setCopii(copii.map((c) => (c.id === id ? { ...c, [field]: value } : c)));
+    };
+
+    // Funcția care resetează complet formularul pentru o nouă persoană
+    const handleReset = () => {
+        setStatus('idle');
+        setTipCompletare(null);
+        setPrezent(null);
+        setNume("");
+        setPrenume("");
+        setVarsta("");
+        setMeniu("Vegetarian");
+        setMentiuni("");
+        setObservatii("");
+        setTelefon("");
+        setNumeInsotit("");
+        setPrenumeInsotit("");
+        setHasCopii(false);
+        setCopii([]);
     };
 
     const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
@@ -128,42 +81,23 @@ export default function RsvpForm() {
             prenume_insotit: tipCompletare === 'insotitor' ? prenumeInsotit : null
         };
 
-        let currentRsvpId = existingId;
+        // Doar INSERT simplu (fără Update/Editare)
+        const { data: rsvpData, error: insertError } = await supabase
+            .from('rsvps')
+            .insert([rsvpPayload])
+            .select()
+            .single();
 
-        if (existingId) {
-            const { error: updateError } = await supabase
-                .from('rsvps')
-                .update(rsvpPayload)
-                .eq('id', existingId as string);
-
-            if (updateError) {
-                console.error(updateError);
-                setStatus('error');
-                return;
-            }
-
-            await supabase.from('rsvp_copii').delete().eq('rsvp_id', existingId as string);
-
-        } else {
-            const { data: rsvpData, error: insertError } = await supabase
-                .from('rsvps')
-                .insert([rsvpPayload])
-                .select()
-                .single();
-
-            if (insertError) {
-                console.error(insertError);
-                setStatus('error');
-                return;
-            }
-            currentRsvpId = rsvpData.id;
-            setExistingId(currentRsvpId);
-            localStorage.setItem('rsvp_id', currentRsvpId as string);
+        if (insertError) {
+            console.error(insertError);
+            setStatus('error');
+            return;
         }
 
+        // Inserăm copiii legați de ID-ul proaspăt creat
         if (prezent && hasCopii && copii.length > 0 && tipCompletare === 'mine') {
             const copiiToInsert = copii.map(c => ({
-                rsvp_id: currentRsvpId as string,
+                rsvp_id: rsvpData.id,
                 nume: c.nume,
                 prenume: c.prenume,
                 varsta: parseInt(c.varsta) || 0,
@@ -178,30 +112,22 @@ export default function RsvpForm() {
         setStatus('success');
     };
 
-    if (status === 'fetching') {
-        return (
-            <div className="bg-wedding-cream p-10 md:p-14 rounded-4xl shadow-lg border border-white/40 text-center animate-pulse w-full">
-                <div className="w-12 h-12 border-4 border-wedding-pink border-t-wedding-rose rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-wedding-text font-serif italic">Se încarcă răspunsul tău...</p>
-            </div>
-        );
-    }
-
     if (status === 'success') {
         return (
             <div className="bg-wedding-cream p-10 md:p-14 rounded-4xl shadow-lg border border-white/40 text-center w-full">
                 <CheckCircle2 className="w-20 h-20 text-wedding-rose mx-auto mb-6" />
                 <h3 className="text-3xl font-serif text-wedding-text mb-4">Mulțumim, {nume}!</h3>
-                <p className="font-sans text-wedding-text/90 mb-8 font-medium">
+                <p className="font-sans text-wedding-text/90 mb-10 font-medium">
                     {prezent ? "Am înregistrat confirmarea ta. Abia așteptăm să sărbătorim împreună!" : "Am înregistrat răspunsul tău. Ne pare rău că nu poți ajunge, dar ne vom gândi la tine!"}
                 </p>
 
+                {/* Butonul nou pentru a trimite alt răspuns (Golește formularul) */}
                 <button
-                    onClick={() => setStatus('idle')}
+                    onClick={handleReset}
                     className="flex items-center justify-center gap-2 mx-auto text-xs font-bold uppercase tracking-widest text-wedding-rose hover:text-wedding-text transition-colors bg-white px-6 py-3 rounded-full shadow-sm"
                 >
-                    <Edit2 className="w-4 h-4" />
-                    Editează Răspunsul
+                    <RotateCcw className="w-4 h-4" />
+                    Trimite alt răspuns
                 </button>
             </div>
         );
@@ -355,7 +281,7 @@ export default function RsvpForm() {
                     {status === 'error' && <p className="text-red-500 text-sm font-bold text-center bg-red-50 p-3 rounded-xl border border-red-100">A apărut o eroare. Te rugăm să încerci din nou.</p>}
 
                     <button disabled={status === 'loading' || prezent === null} type="submit" className="w-full bg-wedding-rose text-white px-8 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-sm hover:bg-wedding-text transition-colors shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
-                        {status === 'loading' ? 'Se salvează...' : existingId ? 'Actualizează Răspunsul' : 'Trimite Răspunsul'}
+                        {status === 'loading' ? 'Se salvează...' : 'Trimite Răspunsul'}
                     </button>
                 </form>
             )}

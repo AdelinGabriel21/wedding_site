@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import Image from "next/image";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -43,12 +44,23 @@ export default function Navbar() {
                 isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm py-4" : "bg-transparent py-6"
             }`}
         >
-            <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+            {/* AICI AM SCHIMBAT LĂȚIMEA: w-full și padding marit pentru a împinge elementele spre colțuri */}
+            <div className="w-full mx-auto px-6 md:px-16 lg:px-24 flex items-center justify-between transition-all duration-300">
+
+                {/* LOGO-UL TĂU DINAMIC */}
                 <div
                     onClick={() => scrollToSection("home")}
-                    className={`font-serif text-2xl cursor-pointer ${isScrolled ? "text-wedding-text" : "text-white drop-shadow-md"}`}
+                    className="cursor-pointer flex items-center"
                 >
-                    I & A
+                    <Image
+                        // Aici se întâmplă magia: dacă am dat scroll pune imaginea black, altfel pe cea albă!
+                        src={isScrolled ? "/images/logo-black.png" : "/images/logo.png"}
+                        alt="Logo Izabela & Adelin"
+                        width={120}
+                        height={48}
+                        priority
+                        className={`h-10 md:h-12 w-auto object-contain transition-all duration-300 ${!isScrolled ? "drop-shadow-lg" : ""}`}
+                    />
                 </div>
 
                 {/* Desktop Menu */}

@@ -7,17 +7,29 @@ export default function Location() {
 
     return (
         <section className="py-20 w-full max-w-4xl mx-auto px-6 text-center">
-            <h2 className="text-4xl font-serif text-wedding-forest mb-12">Locație</h2>
+            <h2 className="text-4xl font-serif text-wedding-text mb-12">Locație</h2>
 
-            <div className="bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-white/60 overflow-hidden shadow-sm">
-                {/* Imagine de tip placeholder pentru locație */}
-                <div className="h-64 bg-wedding-moss/20 flex items-center justify-center border-b border-white/40">
-                    <MapPin className="w-12 h-12 text-wedding-forest opacity-30" />
+            <div className="bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-white/60 overflow-hidden shadow-2xl">
+
+                {/* Partea superioară: Imaginea locației cu Pin-ul suprapus */}
+                <div className="relative h-64 md:h-80 w-full flex items-center justify-center border-b border-white/40 bg-wedding-moss/20">
+                    {/* Imaginea Barn.png așezată sub pin */}
+                    <img
+                        src="/images/Barn.png"
+                        alt="The Forest Barn"
+                        className="absolute inset-0 w-full h-full object-cover"
+                    />
+
+                    {/* Un filtru subtil întunecat (20%) peste imagine ca să iasă în evidență pin-ul alb */}
+                    <div className="absolute inset-0 bg-wedding-text/20"></div>
+
+                    {/* Pin-ul de locație așezat deasupra (z-10) */}
+                    <MapPin className="relative z-10 w-12 h-12 text-white drop-shadow-md opacity-90" />
                 </div>
 
                 <div className="p-8 md:p-12">
-                    <h3 className="text-2xl font-serif text-wedding-forest mb-2">The Forest Barn</h3>
-                    <p className="text-wedding-forest/70 font-sans mb-6">
+                    <h3 className="text-2xl font-serif text-wedding-text mb-2">The Forest Barn</h3>
+                    <p className="text-wedding-text/80 font-sans mb-6">
                         Sat Dragomirna, Comuna Mitocu Dragomirnei, Jud. Suceava <br/>
                         (Lângă Mănăstirea Dragomirna)
                     </p>
@@ -26,10 +38,10 @@ export default function Location() {
                         href={googleMapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-wedding-forest text-white px-8 py-4 rounded-full font-bold tracking-widest uppercase text-xs hover:bg-wedding-rose transition-all shadow-lg"
+                        className="inline-flex items-center gap-2 bg-wedding-text text-white px-8 py-4 rounded-full font-bold tracking-widest uppercase text-xs hover:bg-wedding-rose transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                     >
                         <Navigation className="w-4 h-4" />
-                        Vezi pe Hartă / Navigrează
+                        Vezi pe Hartă / Navighează
                     </a>
                 </div>
             </div>

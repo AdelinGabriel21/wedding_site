@@ -8,7 +8,6 @@ export default function BackToTop() {
 
     useEffect(() => {
         const toggleVisibility = () => {
-            // Arată butoanele după ce dăm scroll mai jos de Hero
             if (window.scrollY > 500) {
                 setIsVisible(true);
             } else {
@@ -37,22 +36,25 @@ export default function BackToTop() {
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"
             }`}
         >
-            {/* Buton "Confirmă Prezența" Plutitor */}
-            <button
-                onClick={scrollToRsvp}
-                className="flex items-center gap-2 bg-wedding-rose text-white px-5 py-3 rounded-full shadow-xl hover:bg-wedding-text hover:scale-105 transition-all"
-            >
-                <CalendarHeart className="w-4 h-4" />
-                <span className="font-sans text-[10px] tracking-widest uppercase font-bold">Confirmă Prezența</span>
-            </button>
-
-            {/* Butonul de Back to Top tradițional */}
+            {/* Butonul de Back to Top - Acum deasupra */}
             <button
                 onClick={scrollToTop}
                 className="bg-white/90 backdrop-blur-md text-wedding-text p-3 rounded-full shadow-lg border border-white/50 hover:bg-wedding-moss hover:text-white transition-colors"
                 aria-label="Back to top"
             >
                 <ArrowUp className="w-5 h-5" />
+            </button>
+
+            {/* Buton "Confirmă Prezența" - Bulă rotundă pe mobil, extins pe desktop */}
+            <button
+                onClick={scrollToRsvp}
+                className="flex items-center justify-center gap-2 bg-wedding-rose text-white p-3 md:px-5 md:py-3 rounded-full shadow-xl hover:bg-wedding-text hover:scale-105 transition-all"
+                aria-label="Confirmă Prezența"
+            >
+                <CalendarHeart className="w-5 h-5" />
+                <span className="hidden md:inline font-sans text-[10px] tracking-widest uppercase font-bold">
+                    Confirmă Prezența
+                </span>
             </button>
         </div>
     );
