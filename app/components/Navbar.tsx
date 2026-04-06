@@ -8,17 +8,47 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
+        let lastScrollY = window.scrollY;
+
         const handleScroll = () => {
-            if (window.scrollY > 50) {
-                setIsScrolled(true);
+            const currentScrollY = window.scrollY;
+
+            // Aproximăm 80% din înălțimea ecranului ca punct de trecere spre "Povestea Noastră"
+            const heroHeight = window.innerHeight * 0.8;
+
+            // 1. Logica pentru fundal (când primește aspectul de "sticlă")
+            setIsScrolled(currentScrollY > 50);
+
+            // 2. Logica pentru Show / Hide
+            if (currentScrollY < heroHeight) {
+                // Cât timp suntem pe videoclipul principal, bara stă mereu pe ecran
+                setIsVisible(true);
             } else {
-                setIsScrolled(false);
+                // Am trecut de prima secțiune, activăm ascunderea inteligentă
+                const delta = currentScrollY - lastScrollY;
+
+                // Ignorăm mișcările de scroll foarte mici (sub 12px) ca să prevenim "glitch"-urile
+                // când utilizatorul mișcă doar un pic degetul în sus și în jos
+                if (Math.abs(delta) > 12) {
+                    if (delta > 0) {
+                        // Scroll în JOS -> Ascundem
+                        setIsVisible(false);
+                        setIsMobileMenuOpen(false); // Închidem meniul automat pentru UX curat
+                    } else {
+                        // Scroll în SUS -> Arătăm
+                        setIsVisible(true);
+                    }
+                }
             }
+
+            // Actualizăm poziția (prevenim valorile negative de la efectul de "bounce" din Safari)
+            lastScrollY = currentScrollY > 0 ? currentScrollY : 0;
         };
 
-        window.addEventListener("scroll", handleScroll);
+        window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
@@ -42,10 +72,12 @@ export default function Navbar() {
     const isSolid = isScrolled || isMobileMenuOpen;
 
     return (
-        // AICI AM MODIFICAT: px-4 pt-4 (pentru mobil) și md:px-8 md:pt-3 (pentru desktop)
-        // md:pt-3 înseamnă doar 12px distanță de sus pe ecrane mari, față de 24px cât era înainte
-        <div className="fixed top-0 left-0 w-full z-50 px-4 pt-4 md:px-8 md:pt-3 pointer-events-none flex justify-center">
-
+        // Aici am adăugat animația care mută bara complet în sus (-translate-y-[150%]) când isVisible este false
+        <div
+            className={`fixed top-0 left-0 w-full z-50 px-4 pt-4 md:px-8 md:pt-3 pointer-events-none flex justify-center transition-transform duration-500 ease-in-out ${
+                isVisible ? "translate-y-0" : "-translate-y-[150%]"
+            }`}
+        >
             <nav
                 className={`pointer-events-auto relative w-full max-w-6xl mx-auto flex items-center justify-between transition-all duration-500 ${
                     isSolid
