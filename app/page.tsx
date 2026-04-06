@@ -51,7 +51,7 @@ export default function Home() {
                         </h1>
                         <div className="w-16 h-px bg-white/60 mx-auto my-6 md:my-8" />
                         <p className="text-xl md:text-2xl font-serif italic text-wedding-cream drop-shadow-md">
-                            {"9 August 2026 • România"}
+                            {"9 August 2026 • Suceava"}
                         </p>
                     </div>
 
@@ -86,7 +86,7 @@ export default function Home() {
                 </section>
 
                 {/* --- SECTION: SCHEDULE --- */}
-                <section className="w-full bg-wedding-cream py-24 md:py-32 px-6">
+                <section className="w-full bg-wedding-cream py-2x4 md:py-32 px-6">
                     <FadeIn id="schedule" className="max-w-3xl mx-auto">
                         <Schedule />
                     </FadeIn>

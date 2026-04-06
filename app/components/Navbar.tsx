@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -38,28 +39,32 @@ export default function Navbar() {
         { label: "Contact", id: "contact" },
     ];
 
-    return (
-        <nav
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-                isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm py-4" : "bg-transparent py-6"
-            }`}
-        >
-            {/* AICI AM SCHIMBAT LĂȚIMEA: w-full și padding marit pentru a împinge elementele spre colțuri */}
-            <div className="w-full mx-auto px-6 md:px-16 lg:px-24 flex items-center justify-between transition-all duration-300">
+    const isSolid = isScrolled || isMobileMenuOpen;
 
-                {/* LOGO-UL TĂU DINAMIC */}
+    return (
+        // AICI AM MODIFICAT: px-4 pt-4 (pentru mobil) și md:px-8 md:pt-3 (pentru desktop)
+        // md:pt-3 înseamnă doar 12px distanță de sus pe ecrane mari, față de 24px cât era înainte
+        <div className="fixed top-0 left-0 w-full z-50 px-4 pt-4 md:px-8 md:pt-3 pointer-events-none flex justify-center">
+
+            <nav
+                className={`pointer-events-auto relative w-full max-w-6xl mx-auto flex items-center justify-between transition-all duration-500 ${
+                    isSolid
+                        ? "bg-white/95 backdrop-blur-md shadow-xl rounded-full px-6 md:px-10 py-3 border border-white/50"
+                        : "bg-transparent px-2 md:px-4 py-4"
+                }`}
+            >
+                {/* LOGO-UL */}
                 <div
                     onClick={() => scrollToSection("home")}
                     className="cursor-pointer flex items-center"
                 >
                     <Image
-                        // Aici se întâmplă magia: dacă am dat scroll pune imaginea black, altfel pe cea albă!
-                        src={isScrolled ? "/images/logo-black.png" : "/images/logo.png"}
+                        src={isSolid ? "/images/logo-black.png" : "/images/logo.png"}
                         alt="Logo Izabela & Adelin"
                         width={120}
                         height={48}
                         priority
-                        className={`h-10 md:h-12 w-auto object-contain transition-all duration-300 ${!isScrolled ? "drop-shadow-lg" : ""}`}
+                        className={`h-10 md:h-12 w-auto object-contain transition-all duration-300 ${!isSolid ? "drop-shadow-lg" : ""}`}
                     />
                 </div>
 
@@ -69,8 +74,10 @@ export default function Navbar() {
                         <button
                             key={item.id}
                             onClick={() => scrollToSection(item.id)}
-                            className={`font-sans text-xs tracking-[0.2em] uppercase font-bold hover:opacity-100 transition-opacity ${
-                                isScrolled ? "text-wedding-text opacity-70" : "text-white opacity-80 drop-shadow-sm hover:drop-shadow-md"
+                            className={`font-sans text-xs tracking-[0.2em] uppercase font-bold transition-all ${
+                                isSolid
+                                    ? "text-wedding-text opacity-70 hover:opacity-100 hover:text-wedding-rose"
+                                    : "text-white opacity-80 drop-shadow-sm hover:drop-shadow-md hover:opacity-100"
                             }`}
                         >
                             {item.label}
@@ -79,7 +86,7 @@ export default function Navbar() {
                     {/* Buton RSVP Highlighted */}
                     <button
                         onClick={() => scrollToSection("rsvp")}
-                        className="bg-wedding-rose text-white font-sans text-xs tracking-[0.2em] uppercase font-bold px-5 py-2.5 rounded-full shadow-md hover:bg-wedding-text hover:shadow-lg transition-all"
+                        className="bg-wedding-rose text-white font-sans text-xs tracking-[0.2em] uppercase font-bold px-6 py-2.5 rounded-full shadow-md hover:bg-wedding-text hover:shadow-lg transition-all"
                     >
                         RSVP
                     </button>
@@ -87,38 +94,45 @@ export default function Navbar() {
 
                 {/* Mobile Menu Toggle */}
                 <button
-                    className="md:hidden"
+                    className="md:hidden transition-transform active:scale-95 p-2"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                     {isMobileMenuOpen ? (
-                        <X className={`w-6 h-6 ${isScrolled ? "text-wedding-text" : "text-white"}`} />
+                        <X className={`w-6 h-6 transition-colors ${isSolid ? "text-wedding-text" : "text-white"}`} />
                     ) : (
-                        <Menu className={`w-6 h-6 ${isScrolled ? "text-wedding-text" : "text-white"}`} />
+                        <Menu className={`w-6 h-6 transition-colors ${isSolid ? "text-wedding-text" : "text-white"}`} />
                     )}
                 </button>
-            </div>
 
-            {/* Mobile Menu */}
-            {isMobileMenuOpen && (
-                <div className="md:hidden absolute top-full left-0 w-full bg-white border-t border-wedding-pink shadow-xl py-6 flex flex-col items-center gap-6">
-                    {navItems.map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => scrollToSection(item.id)}
-                            className="font-sans text-sm tracking-[0.2em] uppercase font-bold text-wedding-text"
+                {/* Mobile Menu Dropdown */}
+                <AnimatePresence>
+                    {isMobileMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            transition={{ duration: 0.25, ease: "easeOut" }}
+                            className="md:hidden absolute top-[calc(100%+1rem)] left-0 w-full bg-white/95 backdrop-blur-md shadow-2xl rounded-3xl py-8 flex flex-col items-center gap-6 border border-wedding-pink/50"
                         >
-                            {item.label}
-                        </button>
-                    ))}
-                    {/* Buton RSVP Highlighted pe Mobile */}
-                    <button
-                        onClick={() => scrollToSection("rsvp")}
-                        className="bg-wedding-rose text-white font-sans text-sm tracking-[0.2em] uppercase font-bold px-8 py-3 rounded-full shadow-md"
-                    >
-                        RSVP
-                    </button>
-                </div>
-            )}
-        </nav>
+                            {navItems.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() => scrollToSection(item.id)}
+                                    className="font-sans text-sm tracking-[0.2em] uppercase font-bold text-wedding-text hover:text-wedding-rose transition-colors"
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
+                            <button
+                                onClick={() => scrollToSection("rsvp")}
+                                className="bg-wedding-rose text-white font-sans text-sm tracking-[0.2em] uppercase font-bold px-8 py-3 rounded-full shadow-md hover:bg-wedding-text transition-all mt-2"
+                            >
+                                RSVP
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </nav>
+        </div>
     );
 }
