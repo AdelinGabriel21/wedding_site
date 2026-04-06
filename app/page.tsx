@@ -75,13 +75,30 @@ export default function Home() {
             <main className="w-full flex flex-col">
 
                 {/* --- SECTION: POVESTEA NOASTRĂ --- */}
-                <section className="w-full bg-wedding-pink py-24 md:py-32 px-6">
+                <section className="w-full bg-wedding-pink py-24 md:py-30 px-6">
                     <FadeIn className="max-w-3xl mx-auto text-center">
                         <p className="text-wedding-rose font-bold tracking-[0.3em] uppercase text-[10px] mb-4">Cum a început totul</p>
-                        <h2 className="text-4xl md:text-5xl font-serif text-wedding-text mb-6">Povestea Noastră</h2>
-                        <p className="font-sans text-wedding-text/90 leading-relaxed text-lg">
-                            De la laboratoarele de informatică din anul doi, unde codul ne-a adus împreună, la o viață plină de aventuri împreună. Suntem extrem de fericiți să începem acest nou capitol și abia așteptăm să sărbătorim alături de voi.
-                        </p>
+                        <h2 className="text-4xl md:text-5xl font-serif text-wedding-text mb-8">Povestea Noastră</h2>
+
+                        <div className="font-sans text-wedding-text/90 leading-relaxed text-lg space-y-6">
+
+                            {/* Container pentru citat și semnătură */}
+                            <div className="mb-8 px-4 md:px-8">
+                                <p className="font-serif italic text-xl md:text-2xl text-wedding-rose mb-2">
+                                    „În încercarea personală de a-L căuta pe Dumnezeu, nu numai că ne-am apropiat de El, dar ne-am găsit și unul pe celălalt.”
+                                </p>
+                                <p className="font-serif italic text-wedding-rose/80 text-right text-base md:text-lg">
+                                    - Izabela
+                                </p>
+                            </div>
+
+                            <p>
+                                Totul a început în vara anului 2023, la Școala Misionară a bisericii noastre (AZS-MR). Deși nu ne cunoșteam dinainte, pașii noștri au fost ghidați spre același loc, animați de aceeași dorință spirituală. După prima sesiune de cursuri am început să vorbim și să ne descoperim, iar o lună mai târziu povestea noastră a prins viață oficial.
+                            </p>
+                            <p>
+                                Am continuat să creștem și să învățăm împreună, finalizând cursurile Școlii Misionare. Acum, ne pregătim cu emoție și recunoștință pentru cel mai important pas. Pe <strong>9 August 2026</strong>, cu binecuvântarea lui Dumnezeu, ne vom uni pentru veșnicie.
+                            </p>
+                        </div>
                     </FadeIn>
                 </section>
 
