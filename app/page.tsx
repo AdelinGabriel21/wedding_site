@@ -8,6 +8,7 @@ import Location from "./components/Location";
 import Gallery from "./components/Gallery";
 import FadeIn from "./components/FadeIn";
 import RsvpForm from "./components/RsvpForm";
+import DressCode from "./components/DressCode";
 import Image from "next/image"; // Importă Image din Next.js
 
 export default function Home() {
@@ -117,16 +118,7 @@ export default function Home() {
                 </section>
 
                 {/* --- SECTION: DRESS CODE --- */}
-                <section className="w-full bg-wedding-moss py-24 md:py-32 px-6 text-wedding-cream">
-                    <FadeIn id="dress-code" className="max-w-3xl mx-auto text-center">
-                        <h2 className="text-4xl md:text-5xl font-serif mb-6 text-white">Dress Code</h2>
-                        <p className="font-sans text-white/90 leading-relaxed text-lg">
-                            Pentru a completa atmosfera magică a locației Forest Barn, vă sugerăm o ținută de tip <span className="font-bold text-wedding-text">Black Tie / Elegant</span>.
-                            <br /><br />
-                            Sugerăm culori calde și naturale pentru a ne asorta cu decorul din inima pădurii.
-                        </p>
-                    </FadeIn>
-                </section>
+                <DressCode />
 
                 {/* --- SECTION: GALLERY --- */}
                 <section className="w-full bg-wedding-bg py-24 px-6">
