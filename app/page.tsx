@@ -10,6 +10,7 @@ import FadeIn from "./components/FadeIn";
 import RsvpForm from "./components/RsvpForm";
 import DressCode from "./components/DressCode";
 import Image from "next/image"; // Importă Image din Next.js
+import { Phone } from "lucide-react";
 
 export default function Home() {
     const scrollToRsvp = () => {
@@ -134,15 +135,30 @@ export default function Home() {
                         <FadeIn id="contact" className="w-full">
                             <h2 className="text-4xl md:text-5xl font-serif text-wedding-text mb-10 text-center">Contact</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 font-sans text-center">
-                                <div className="p-8 bg-wedding-cream rounded-4xl shadow-md border border-white/50">
+                                {/* Card Izabela */}
+                                <div className="p-8 bg-wedding-cream rounded-4xl shadow-md border border-white/50 flex flex-col items-center justify-center">
                                     <p className="text-wedding-rose font-bold uppercase tracking-[0.2em] text-[10px] mb-3">Mireasă</p>
-                                    <p className="text-2xl font-medium mb-1 text-wedding-text">Izabela</p>
-                                    <p className="text-sm text-wedding-text/70">07xx xxx xxx</p>
+                                    <p className="text-2xl font-medium mb-3 text-wedding-text">Izabela</p>
+                                    <a
+                                        href="tel:+40773304376"
+                                        className="inline-flex items-center gap-2 bg-white/60 px-5 py-2.5 rounded-full text-sm font-bold text-wedding-text/80 hover:text-wedding-rose hover:bg-white hover:scale-105 transition-all shadow-sm"
+                                    >
+                                        <Phone className="w-4 h-4" />
+                                        0773 304 376
+                                    </a>
                                 </div>
-                                <div className="p-8 bg-wedding-rose text-wedding-cream rounded-4xl shadow-md border border-white/20">
+
+                                {/* Card Adelin */}
+                                <div className="p-8 bg-wedding-rose text-wedding-cream rounded-4xl shadow-md border border-white/20 flex flex-col items-center justify-center">
                                     <p className="text-wedding-pink font-bold uppercase tracking-[0.2em] text-[10px] mb-3">Mire</p>
-                                    <p className="text-2xl font-medium mb-1">Adelin</p>
-                                    <p className="text-sm opacity-90">07xx xxx xxx</p>
+                                    <p className="text-2xl font-medium mb-3">Adelin</p>
+                                    <a
+                                        href="tel:+40773829445"
+                                        className="inline-flex items-center gap-2 bg-wedding-pink/40 px-5 py-2.5 rounded-full text-sm font-bold text-wedding-cream hover:bg-wedding-pink/60 hover:scale-105 transition-all shadow-sm"
+                                    >
+                                        <Phone className="w-4 h-4" />
+                                        0773 829 445
+                                    </a>
                                 </div>
                             </div>
                         </FadeIn>

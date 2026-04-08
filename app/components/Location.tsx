@@ -6,8 +6,8 @@ export default function Location() {
     const googleMapsUrl = "https://www.google.com/maps/search/?api=1&query=The+Forest+Barn+Dragomirna&query_place_id=ChIJf4Vbc5P5NEcRmIw9xdpxpgE";
 
     return (
-        // Am redus py-20 la py-4 md:py-8 pentru a tăia din spațiul excesiv
-        <section className="w-full max-w-4xl mx-auto px-6 py-4 md:py-8 text-center">
+        // Am eliminat "px-6" și am transformat secțiunea în "div" pentru o structură perfect integrată cu app/page.tsx
+        <div className="w-full py-4 md:py-8 text-center">
             <h2 className="text-4xl font-serif text-wedding-text mb-12">Locație</h2>
 
             <div className="bg-white/40 backdrop-blur-md rounded-[2.5rem] border border-white/60 overflow-hidden shadow-2xl">
@@ -45,6 +45,6 @@ export default function Location() {
                     </a>
                 </div>
             </div>
-        </section>
+        </div>
     );
 }
