@@ -25,8 +25,8 @@ const events = [
 
 export default function Schedule() {
     return (
-        // Am eliminat "py-20" de aici pentru a rezolva problema spațierii duble
-        <section className="w-full max-w-4xl mx-auto px-6">
+        // Am adăugat py-12 pe mobil și py-16 pe desktop pentru a lăsa spațiu sus și jos
+        <section className="w-full max-w-4xl mx-auto px-6 py-12 md:py-2">
             <h2 className="text-4xl md:text-5xl font-serif text-wedding-text text-center mb-4">
                 Programul Zilei
             </h2>
@@ -43,7 +43,6 @@ export default function Schedule() {
                         </div>
 
                         {/* Caseta evenimentului */}
-                        {/* Umbrele au fost crescute: shadow-lg (normal) -> shadow-2xl (hover) */}
                         <div className="bg-white/60 backdrop-blur-md p-6 rounded-3xl border border-white/80 shadow-lg hover:shadow-2xl transition-all duration-300">
                             <span className="font-sans font-bold text-wedding-rose text-xs tracking-widest uppercase mb-2 block">
                                 {event.time}
