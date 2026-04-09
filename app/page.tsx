@@ -28,13 +28,15 @@ export default function Home() {
             {/* --- SECTION: HOME (HERO) --- */}
             <section
                 id="home"
-                className="relative h-screen min-h-162.5 w-full flex flex-col items-center justify-center overflow-hidden"
+                className="relative h-screen min-h-160 w-full flex flex-col items-center justify-center overflow-hidden"
             >
+                {/* Am adăugat poster="/images/hero.png" aici 👇 */}
                 <video
                     autoPlay
                     muted
                     loop
                     playsInline
+                    poster="/images/hero.png"
                     className="absolute z-0 w-auto min-w-full min-h-full max-w-none object-cover"
                 >
                     <source src="/videos/hero-bg.mp4" type="video/mp4" />
@@ -46,14 +48,14 @@ export default function Home() {
                     <div className="flex-1" />
                     <div className="text-center w-full">
                         <p className="text-wedding-cream font-sans font-bold tracking-[0.5em] uppercase text-xs mb-4 drop-shadow-md">
-                            {"Ne căsătorim"}
+                            Ne căsătorim
                         </p>
                         <h1 className="text-6xl md:text-9xl font-serif text-white drop-shadow-2xl">
-                            {"Izabela & Adelin"}
+                            Izabela & Adelin
                         </h1>
                         <div className="w-16 h-px bg-white/60 mx-auto my-6 md:my-8" />
                         <p className="text-xl md:text-2xl font-serif italic text-wedding-cream drop-shadow-md">
-                            {"9 August 2026 • Suceava"}
+                            9 August 2026 • Suceava
                         </p>
                     </div>
 
