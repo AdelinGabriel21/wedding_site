@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Montserrat } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react"; // 1. Importăm modulul Vercel Analytics
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next"; // <-- 1. Importul nou
 import "./globals.css";
 
-// 1. Definim fonturile
 const playfair = Playfair_Display({
     subsets: ["latin"],
-    variable: "--font-playfair", // Numele variabilei CSS
+    variable: "--font-playfair",
     display: 'swap',
 });
 
 const montserrat = Montserrat({
     subsets: ["latin"],
-    variable: "--font-montserrat", // Numele variabilei CSS
+    variable: "--font-montserrat",
     display: 'swap',
 });
 
@@ -27,12 +27,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        // 2. Aplicăm variabilele pe tag-ul html
         <html lang="ro" className={`${playfair.variable} ${montserrat.variable}`} suppressHydrationWarning>
         <body className="antialiased font-sans">
         {children}
-        {/* 3. Adăugăm componenta Analytics la finalul body-ului */}
+
         <Analytics />
+        <SpeedInsights /> {/* <-- 2. Componenta nouă */}
         </body>
         </html>
     );
