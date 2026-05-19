@@ -2,24 +2,36 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function proxy(request: NextRequest) {
-    // 1. Verificăm dacă utilizatorul are cookie-ul de acces
     const hasAccess = request.cookies.has('wedding_access');
     const path = request.nextUrl.pathname;
 
-    // 2. Definim paginile care sunt publice (nu necesită parolă)
-    const isPublicPage = path.startsWith('/login') || path.startsWith('/invitation') || path.startsWith('/qr');
+    // 1. Scoatem '/invitation' din rutele complet publice
+    const isPublicPage = path.startsWith('/login') || path.startsWith('/qr');
 
-    // 3. Lăsăm fișierele statice (imagini, video, css) să se încarce liber
     const isStaticAsset = path.startsWith('/_next') || path.startsWith('/videos') || path.startsWith('/images') || path.includes('favicon.ico');
 
     if (isStaticAsset) return NextResponse.next();
 
-    // 4. Dacă nu are acces și încearcă să intre pe o pagină protejată
+    // 2. Adăugăm logica specifică pentru /invitation
+    if (path.startsWith('/invitation')) {
+        const secret = request.nextUrl.searchParams.get('secret');
+
+        // Dacă nu are cookie ȘI nu are nici parola corectă în link, îl trimitem la login
+        if (!hasAccess && secret !== 'August2026') {
+            return NextResponse.redirect(new URL('/login', request.url));
+        }
+
+        // Dacă are parola în URL (ex: /invitation?secret=August2026)
+        // sau are deja acces, îl lăsăm să vadă animația.
+        return NextResponse.next();
+    }
+
+    // 3. Protecția generală pentru restul paginilor
     if (!hasAccess && !isPublicPage) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    // 5. Dacă are deja acces și încearcă să intre pe /login, îl trimitem pe Home
+    // 4. Dacă are deja acces și intră pe /login, îl trimitem pe Home
     if (hasAccess && path === '/login') {
         return NextResponse.redirect(new URL('/', request.url));
     }
