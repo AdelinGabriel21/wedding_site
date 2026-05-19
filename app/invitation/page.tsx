@@ -61,7 +61,7 @@ export default function InvitationPage() {
     };
 
     return (
-        <div className="min-h-screen bg-wedding-pink flex flex-col items-center justify-center relative overflow-hidden selection:bg-wedding-cream">
+        <div className="h-dvh bg-wedding-pink flex flex-col items-center justify-center relative overflow-hidden selection:bg-wedding-cream">
 
             {/* Preîncărcăm imaginile care apar după click (invitația + plicul deschis)
                 ca să fie deja în cache-ul browserului când pornește animația */}
@@ -75,14 +75,14 @@ export default function InvitationPage() {
             <motion.div
                 animate={{ opacity: isOpen ? 0 : 1, y: isOpen ? -50 : 0 }}
                 transition={{ duration: 0.5 }}
-                className="absolute top-16 md:top-24 text-wedding-text text-center pointer-events-none z-50"
+                className="absolute top-8 md:top-24 text-wedding-text text-center pointer-events-none z-50"
             >
                 <h1 className="font-serif text-3xl md:text-4xl mb-2">Ați primit o invitație!</h1>
                 <p className="font-sans text-xs tracking-widest uppercase opacity-70">Apasă pe sigiliu pentru a deschide</p>
             </motion.div>
 
             {/* Containerul central */}
-            <div className="relative w-full max-w-3xl h-dvh flex items-center justify-center">
+            <div className="relative w-full max-w-3xl flex-1 flex items-center justify-center -mt-8 md:mt-0">
 
                 {/* --- STRATUL 1 (Z-10): SPATELE PLICULUI --- */}
                 <motion.div
@@ -122,7 +122,7 @@ export default function InvitationPage() {
                                 // Pe desktop: apogeu mai mic (-180 vs -230) ca să nu iasă din viewport,
                                 // și aterizare la -40 (mai sus) pentru spațiu sub buton
                                 y: isMobile
-                                    ? [startY, startY, -230, 0]
+                                    ? [startY, startY, -230, -25]
                                     : [startY, startY, -180, -40],
                                 // La apogeu, o lăsăm să se încline foarte puțin (de la 90 la 85 de grade)
                                 // Asta elimină senzația de obiect rigid și începe mișcarea de rotație mai devreme
@@ -172,7 +172,7 @@ export default function InvitationPage() {
                         animate={{ opacity: 1, y: 0 }}
                         // Apare grațios abia după ce animația principală s-a calmat (la 2.2 secunde)
                         transition={{ delay: 3.8, type: "spring", stiffness: 100, damping: 15 }}
-                        className="absolute bottom-8 z-50 w-full px-6 flex justify-center"
+                        className="absolute bottom-4 md:bottom-8 z-50 w-full px-6 flex justify-center"
                     >
                         <form action={grantDirectAccess}>
                             <button type="submit" className="bg-wedding-text text-white px-10 py-5 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-wedding-rose transition-colors shadow-2xl hover:scale-105 active:scale-95 border border-white/20">
