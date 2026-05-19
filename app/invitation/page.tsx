@@ -29,6 +29,25 @@ export default function InvitationPage() {
         scale: [1, 1, 1, 0.9]
     } : { y: 0, rotate: 0, opacity: 1, scale: 1 };
 
+    // Fața plicului (buzunarul) trebuie să dispară INSTANT înainte ca invitația
+    // să înceapă să coboare înapoi. Invitația ajunge la apogeu la time=0.45,
+    // deci fața plicului dispare brusc la time=0.37-0.38 (snap, nu fade).
+    const envelopeFrontAnimation = isOpen ? {
+        y: [0, 0, 0, 0, 0],
+        rotate: [0, 0, 0, 0, 0],
+        // Rămâne 100% vizibil până la 0.37, apoi sare instant la 0 la 0.38
+        opacity: [1, 1, 1, 0, 0],
+        scale: [1, 1, 1, 1, 0.9]
+    } : { y: 0, rotate: 0, opacity: 1, scale: 1 };
+
+    const envelopeFrontTransition = {
+        duration: 4.8,
+        // 0.37 → 0.38: snap instant, invitația e clar în aer la acest moment
+        // Încă înainte de apogeul invitației (0.45)
+        times: [0, 0.10, 0.37, 0.38, 1],
+        ease: ["linear", "linear", "linear", "linear"] as any
+    };
+
     // Sincronizarea este cheia: 2.4 secunde total.
     // [0, 0.1, 0.4, 0.6, 1] înseamnă pași la 0s, 0.24s, 0.96s, 1.44s și 2.4s.
     const sharedTransition = {
@@ -69,6 +88,7 @@ export default function InvitationPage() {
                         src="/images/envelope_closed.png"
                         alt="Plic Închis"
                         fill
+                        sizes="(max-width: 768px) 320px, 450px"
                         priority
                         className={`object-contain transition-opacity duration-200 ${isOpen ? "opacity-0" : "opacity-100"}`}
                     />
@@ -77,6 +97,7 @@ export default function InvitationPage() {
                         src="/images/envelope_open_back.png"
                         alt="Plic Deschis Spate"
                         fill
+                        sizes="(max-width: 768px) 320px, 450px"
                         priority
                         className={`object-contain transition-opacity duration-200 ${isOpen ? "opacity-100" : "opacity-0"}`}
                     />
@@ -90,8 +111,12 @@ export default function InvitationPage() {
                             initial={{ opacity: 0, y: startY, rotate: 90, scale: startScale }}
                             animate={{
                                 opacity: [0, 1, 1, 1],
-                                y: [startY, startY, -230, 0],
-                                // La apogeu (-230), o lăsăm să se încline foarte puțin (de la 90 la 85 de grade)
+                                // Pe desktop: apogeu mai mic (-180 vs -230) ca să nu iasă din viewport,
+                                // și aterizare la -40 (mai sus) pentru spațiu sub buton
+                                y: isMobile
+                                    ? [startY, startY, -230, 0]
+                                    : [startY, startY, -180, -40],
+                                // La apogeu, o lăsăm să se încline foarte puțin (de la 90 la 85 de grade)
                                 // Asta elimină senzația de obiect rigid și începe mișcarea de rotație mai devreme
                                 rotate: [90, 90, 85, 0],
                                 // La apogeu, începe deja să crească milimetric (+ 0.05) ca mișcarea să fie cursivă
@@ -104,6 +129,7 @@ export default function InvitationPage() {
                                 src="/images/Invitatie.png"
                                 alt="Invitație Izabela & Adelin"
                                 fill
+                                sizes="(max-width: 768px) 85vw, 400px"
                                 className="object-cover"
                                 priority
                             />
@@ -114,14 +140,15 @@ export default function InvitationPage() {
 
                 {/* --- STRATUL 3 (Z-30): FAȚA PLICULUI (BUZUNARUL) --- */}
                 <motion.div
-                    animate={envelopeAnimation}
-                    transition={sharedTransition}
+                    animate={envelopeFrontAnimation}
+                    transition={envelopeFrontTransition}
                     className="absolute z-30 w-[320px] h-80 md:w-112.5 md:h-112.5 pointer-events-none"
                 >
                     <Image
                         src="/images/envelope_open_front.png"
                         alt="Plic Deschis Față"
                         fill
+                        sizes="(max-width: 768px) 320px, 450px"
                         priority
                         className={`object-contain transition-opacity duration-200 ${isOpen ? "opacity-100 drop-shadow-md" : "opacity-0"}`}
                     />
