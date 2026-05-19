@@ -63,6 +63,14 @@ export default function InvitationPage() {
     return (
         <div className="min-h-screen bg-wedding-pink flex flex-col items-center justify-center relative overflow-hidden selection:bg-wedding-cream">
 
+            {/* Preîncărcăm imaginile care apar după click (invitația + plicul deschis)
+                ca să fie deja în cache-ul browserului când pornește animația */}
+            <div aria-hidden="true" className="absolute w-0 h-0 overflow-hidden pointer-events-none">
+                <Image src="/images/Invitatie.png" alt="" width={1} height={1} priority />
+                <Image src="/images/envelope_open_back.png" alt="" width={1} height={1} priority />
+                <Image src="/images/envelope_open_front.png" alt="" width={1} height={1} priority />
+            </div>
+
             {/* Text ajutător */}
             <motion.div
                 animate={{ opacity: isOpen ? 0 : 1, y: isOpen ? -50 : 0 }}
